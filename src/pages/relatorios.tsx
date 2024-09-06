@@ -1,6 +1,6 @@
 import Header from "@/app/components/Header";
 
-export default function LimiteDeGastos() {
+export default function Relatorios() {
   return (
     <>
       <Header></Header>
