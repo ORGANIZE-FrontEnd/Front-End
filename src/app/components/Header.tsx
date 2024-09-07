@@ -21,7 +21,6 @@ export default function Header() {
   const bellRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
-
   useEffect(() => {
     const activeLink = document.querySelector(".active-link") as HTMLElement;
     const navContainer = navRef.current;
@@ -30,10 +29,10 @@ export default function Header() {
       // Calcula a posição relativa ao contêiner de navegação
       const navContainerRect = navContainer.getBoundingClientRect();
       const activeLinkRect = activeLink.getBoundingClientRect();
-      
+
       // Ajusta a posição da barra com base no contêiner
       setIndicatorPosition(activeLinkRect.left);
-      setIndicatorWidth(activeLink.offsetWidth+5);
+      setIndicatorWidth(activeLink.offsetWidth + 5);
     }
   }, [router.pathname]);
 
@@ -44,7 +43,6 @@ export default function Header() {
 
   const handleMouseEnterProfile = () => setShowProfileMenu(true);
   const handleMouseLeaveProfile = () => setShowProfileMenu(false);
-
 
   return (
     <nav className="bg-green border-gray-200 dark:bg-gray-900 relative">

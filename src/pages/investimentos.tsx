@@ -1,7 +1,6 @@
 import Header from "@/app/components/Header";
 
 import { IoEyeSharp, IoEyeOffSharp } from "react-icons/io5";
- 
 
 export default function Investimentos() {
   const [isVisible, setIsVisible] = useState(true);
@@ -28,16 +27,19 @@ export default function Investimentos() {
             <div className="p-5">
               <WordSwitcher />
             </div>
-            
+
             <div className="flex items-center gap-2 p-5">
-              <div
-                className="cursor-pointer"
-                onClick={handleToggle}
-              >
+              <div className="cursor-pointer" onClick={handleToggle}>
                 {isVisible ? (
-                  <IoEyeSharp className="text-base" style={{ color: "#16C64F" }} />
+                  <IoEyeSharp
+                    className="text-base"
+                    style={{ color: "#16C64F" }}
+                  />
                 ) : (
-                  <IoEyeOffSharp className="text-base" style={{ color: "#16C64F" }} />
+                  <IoEyeOffSharp
+                    className="text-base"
+                    style={{ color: "#16C64F" }}
+                  />
                 )}
               </div>
               <button
@@ -90,21 +92,20 @@ export function WordSwitcher() {
       <button
         onClick={handlePrev}
         className="p-2 rounded text-[#787878] hover:text-[#787878] hover:bg-gray-100 transition-all duration-500 ease-in-out active:scale-90"
-        style={{color: "#787878"}}
+        style={{ color: "#787878" }}
       >
         <FaArrowLeft />
       </button>
-      <div className="text-xl font-semibold w-32 text-center text-[#787878]"
-            style={{color: "#787878",
-               width: '100px',
-            }}
+      <div
+        className="text-xl font-semibold w-32 text-center text-[#787878]"
+        style={{ color: "#787878", width: "100px" }}
       >
         {words[currentIndex]}
       </div>
       <button
         onClick={handleNext}
         className="p-2 rounded  hover:text-[#787878] hover:bg-gray-100 transition-all duration-500 ease-in-out active:scale-90"
-        style={{color: "#787878"}}
+        style={{ color: "#787878" }}
       >
         <FaArrowRight />
       </button>
