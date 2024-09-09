@@ -1,6 +1,8 @@
 import Header from "@/app/organisms/Header";
+import useLogUser from "@/app/atoms/useLogUser";
 
 export default function Home() {
+  useLogUser();
   return (
     <>
       <Header />
