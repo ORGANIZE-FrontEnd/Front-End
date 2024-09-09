@@ -1,10 +1,11 @@
-import Header from "@/app/components/Header";
+import SpendingLimitDisplay from "@/app/molecules/SpendingLimitDisplay";
+import Header from "@/app/organisms/Header";
 
 export default function Investimentos() {
   return (
     <>
-      <Header></Header>
-      <h1>investimentos</h1>
+      <Header />
+      <SpendingLimitDisplay title={"Investimentos"} />
     </>
   );
 }
