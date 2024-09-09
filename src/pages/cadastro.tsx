@@ -13,8 +13,8 @@ const MainContent = () => (
     </div>
     <InputField type="email" id="email" placeholder="Email" />
     <InputField type="password" id="password" placeholder="Senha" />
-    <InputField type="cpf" id="cpf" placeholder="CPF" />
-    <InputField type="phone" id="phone" placeholder="Telefone" />
+    <InputField type="text" id="cpf" placeholder="CPF" />
+    <InputField type="tel" id="phone" placeholder="Telefone" />
     <InputField type="text" id="birthDate" placeholder="Data de Nacimento" />
     <Button
       title={"Cadastre-se"}
