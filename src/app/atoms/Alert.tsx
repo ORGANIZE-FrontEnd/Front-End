@@ -3,7 +3,7 @@ import React from "react";
 interface AlertProps {
   message: string;
   type: "error" | "success" | "info";
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 const Alert: React.FC<AlertProps> = ({ message, type, onClose }) => {
