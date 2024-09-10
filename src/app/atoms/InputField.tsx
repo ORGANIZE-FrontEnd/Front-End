@@ -3,7 +3,7 @@ export const InputField: React.FC<{
   id: string;
   placeholder: string;
   value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }> = ({ type, id, placeholder, onChange, value }) => (
   <div className="mb-6 w-full px-5 lg:px-10 xl:px-20">
     <input

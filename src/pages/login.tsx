@@ -6,12 +6,13 @@ import InputField from "@/app/atoms/InputField";
 import SidebarContent from "@/app/molecules/SideBarContent";
 import React, { useEffect, useState } from "react";
 import useLogUser from "@/app/atoms/useLogUser";
+import Alert from "@/app/atoms/Alert";
 
 const MainContent = () => {
   const [inputEmail, setInputEmail] = useState("");
   const [inputPassword, setInputPassword] = useState("");
-  const [user, setUser] = useAtom(userAtom); // Get stored user
-  const [error, setError] = useState(""); // State for error message
+  const [user, setUser] = useAtom(userAtom);
+  const [error, setError] = useState("");
   const router = useRouter();
   useLogUser();
 
@@ -22,16 +23,15 @@ const MainContent = () => {
   }, [user, router]);
 
   const handleLogin = () => {
-    // Validate input credentials with stored user
     if (inputEmail === user.email && inputPassword === user.password) {
-      setError(""); // Clear any previous error
+      setError("");
       setUser({
         ...user,
         isAuthenticated: true,
       });
-      router.push("/home"); // Redirect on successful login
+      router.push("/home");
     } else {
-      setError("Invalid credentials"); // Set error message
+      setError("Invalid credentials");
     }
   };
 
@@ -60,12 +60,7 @@ const MainContent = () => {
         onClick={handleLogin}
         className="w-2/6 focus:outline-none text-white bg-green hover:bg-green800 focus:ring-4 focus:ring-green300 font-medium rounded-lg text-base px-5 py-2.5 me-2 mb-2"
       />
-      {error && (
-        <div className="mt-4 p-4 text-red-600 bg-red-100 rounded-md">
-          <span className="font-medium">Usuario ou senha invalido!</span> Change
-          a few things up and try submitting again.
-        </div>
-      )}
+      {error && <Alert message="Usuário ou senha inválido!" type="error" />}
     </div>
   );
 };

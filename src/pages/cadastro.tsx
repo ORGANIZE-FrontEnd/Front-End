@@ -4,23 +4,74 @@ import { userAtom } from "@/app/atoms/authAtom";
 import Button from "@/app/atoms/Button";
 import InputField from "@/app/atoms/InputField";
 import SidebarContent from "@/app/molecules/SideBarContent";
-import React, { useState } from "react";
+import { useState } from "react";
+import useLogUser from "@/app/atoms/useLogUser";
+import Alert from "@/app/atoms/Alert";
+
+// Validation functions
+const validators = {
+  email: (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+  cpf: (cpf: string) => /^[0-9]{11}$/.test(cpf),
+  phone: (phone: string) => /^\(?\d{2}\)?[\s-]?[\s9]?\d{4}-?\d{4}$/.test(phone),
+  password: (password: string) => password.trim() !== "",
+  birthDate: (date: string) => date.trim() !== "",
+};
+
+// Validation messages
+const validationMessages = {
+  email: "Por favor, insira um e-mail válido.",
+  cpf: "Por favor, insira um CPF válido com 11 dígitos.",
+  phone:
+    "Por favor, insira um número de telefone válido no formato brasileiro.",
+  password: "Por favor, insira uma senha.",
+  birthDate: "Por favor, insira uma data de nascimento.",
+};
 
 const MainContent = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [user, setUser] = useAtom(userAtom);
-  const [cpf, setCpf] = useState("");
-  const [phone, setPhone] = useState("");
-  const [birthDate, setBirthDate] = useState("");
-  const [isAuthenticated, setisAuthenticated] = useState(false);
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+    cpf: "",
+    phone: "",
+    birthDate: "",
+  });
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [alertType, setAlertType] = useState<"error" | "success" | "info">("info");
+  const [, setUser] = useAtom(userAtom);
   const router = useRouter();
+  useLogUser();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [id]: value }));
+  };
+
+  const handleValidation = () => {
+    for (const [key, validator] of Object.entries(validators)) {
+      if (!validator(formData[key as keyof typeof formData])) {
+        return validationMessages[key as keyof typeof formData];
+      }
+    }
+    return null;
+  };
 
   const handleSignUp = () => {
-    // Save email and password to Jotai
-    setUser({ email, password, birthDate, cpf, phone, isAuthenticated });
-    // Redirect to login page
-    router.push("/login");
+    const validationError = handleValidation();
+    if (validationError) {
+      setAlertMessage(validationError);
+      setAlertType("error");
+      return;
+    }
+
+    // If all validations pass, save the user and show success alert
+    setUser({ ...formData, isAuthenticated: false });
+    setAlertMessage("Usuário criado com sucesso!");
+    setAlertType("success");
+
+    // Redirect to login after a brief delay
+    setTimeout(() => {
+      router.push("/login");
+    }, 2000); // Adjust timing as needed
   };
 
   return (
@@ -28,40 +79,41 @@ const MainContent = () => {
       <div className="text-5xl font-semibold text-green text-center">
         <p>Bem-vindo!</p>
       </div>
+      {alertMessage && <Alert message={alertMessage} type={alertType} />}
       <InputField
         type="email"
         id="email"
         placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
+        value={formData.email}
+        onChange={handleChange}
       />
       <InputField
         type="password"
         id="password"
         placeholder="Senha"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
+        value={formData.password}
+        onChange={handleChange}
       />
       <InputField
         type="text"
         id="cpf"
         placeholder="CPF"
-        value={cpf}
-        onChange={(e) => setCpf(e.target.value)}
+        value={formData.cpf}
+        onChange={handleChange}
       />
       <InputField
         type="text"
         id="phone"
         placeholder="Telefone"
-        value={phone}
-        onChange={(e) => setPhone(e.target.value)}
+        value={formData.phone}
+        onChange={handleChange}
       />
       <InputField
         type="date"
         id="birthDate"
         placeholder="Data de Nacimento"
-        value={birthDate}
-        onChange={(e) => setBirthDate(e.target.value)}
+        value={formData.birthDate}
+        onChange={handleChange}
       />
       <Button
         title="Cadastre-se"
