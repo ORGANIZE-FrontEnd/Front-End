@@ -12,7 +12,8 @@ import Alert from "@/app/atoms/Alert";
 const validators = {
   email: (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
   cpf: (cpf: string) => /^[0-9]{11}$/.test(cpf),
-  phone: (phone: string) => /^\(?\d{2}\)?[\s-]?[\s9]?\d{4}-?\d{4}$/.test(phone),
+  phone: (phone: string) =>
+    /^\(?\d{2}\)?[\s-]?[\s9]?\d{4}-?\d{4}$/.test(phone),
   password: (password: string) => password.trim() !== "",
   birthDate: (date: string) => date.trim() !== "",
 };
@@ -21,8 +22,7 @@ const validators = {
 const validationMessages = {
   email: "Por favor, insira um e-mail válido.",
   cpf: "Por favor, insira um CPF válido com 11 dígitos.",
-  phone:
-    "Por favor, insira um número de telefone válido no formato brasileiro.",
+  phone: "Por favor, insira um número de telefone válido no formato brasileiro.",
   password: "Por favor, insira uma senha.",
   birthDate: "Por favor, insira uma data de nascimento.",
 };
@@ -36,7 +36,9 @@ const MainContent = () => {
     birthDate: "",
   });
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
-  const [alertType, setAlertType] = useState<"error" | "success" | "info">("info");
+  const [alertType, setAlertType] = useState<"error" | "success" | "info">(
+    "info"
+  );
   const [, setUser] = useAtom(userAtom);
   const router = useRouter();
   useLogUser();
@@ -74,53 +76,65 @@ const MainContent = () => {
     }, 2000); // Adjust timing as needed
   };
 
+  const handleCloseAlert = () => {
+    setAlertMessage(null);
+  };
+
   return (
-    <div className="w-4/6 bg-white flex flex-col justify-center items-center gap-2.5 border-l-2 border-gray-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] shadow-[#898686]">
-      <div className="text-5xl font-semibold text-green text-center">
-        <p>Bem-vindo!</p>
+    <>
+      {alertMessage && (
+        <Alert
+          message={alertMessage}
+          type={alertType}
+          onClose={handleCloseAlert}
+        />
+      )}
+      <div className="w-4/6 bg-white flex flex-col justify-center items-center gap-2.5 border-l-2 border-gray-200 shadow-[0_4px_6px_-1px_rgba(0,0,0,0.1)] shadow-[#898686]">
+        <div className="text-5xl font-semibold text-green text-center">
+          <p>Bem-vindo!</p>
+        </div>
+        <InputField
+          type="email"
+          id="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={handleChange}
+        />
+        <InputField
+          type="password"
+          id="password"
+          placeholder="Senha"
+          value={formData.password}
+          onChange={handleChange}
+        />
+        <InputField
+          type="text"
+          id="cpf"
+          placeholder="CPF"
+          value={formData.cpf}
+          onChange={handleChange}
+        />
+        <InputField
+          type="text"
+          id="phone"
+          placeholder="Telefone"
+          value={formData.phone}
+          onChange={handleChange}
+        />
+        <InputField
+          type="date"
+          id="birthDate"
+          placeholder="Data de Nacimento"
+          value={formData.birthDate}
+          onChange={handleChange}
+        />
+        <Button
+          title="Cadastre-se"
+          onClick={handleSignUp}
+          className="w-1/2 focus:outline-none text-white bg-green hover:bg-green800 focus:ring-4 focus:ring-green300 font-medium rounded-lg text-base px-5 py-2.5 me-2 mb-2"
+        />
       </div>
-      {alertMessage && <Alert message={alertMessage} type={alertType} />}
-      <InputField
-        type="email"
-        id="email"
-        placeholder="Email"
-        value={formData.email}
-        onChange={handleChange}
-      />
-      <InputField
-        type="password"
-        id="password"
-        placeholder="Senha"
-        value={formData.password}
-        onChange={handleChange}
-      />
-      <InputField
-        type="text"
-        id="cpf"
-        placeholder="CPF"
-        value={formData.cpf}
-        onChange={handleChange}
-      />
-      <InputField
-        type="text"
-        id="phone"
-        placeholder="Telefone"
-        value={formData.phone}
-        onChange={handleChange}
-      />
-      <InputField
-        type="date"
-        id="birthDate"
-        placeholder="Data de Nacimento"
-        value={formData.birthDate}
-        onChange={handleChange}
-      />
-      <Button
-        title="Cadastre-se"
-        onClick={handleSignUp}
-        className="w-1/2 focus:outline-none text-white bg-green hover:bg-green800 focus:ring-4 focus:ring-green300 font-medium rounded-lg text-base px-5 py-2.5 me-2 mb-2"
-      />
-    </div>
+    </>
   );
 };
 
