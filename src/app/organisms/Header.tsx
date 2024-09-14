@@ -118,7 +118,7 @@ export default function Header() {
             onMouseLeave={handleMouseLeaveBell}
           >
             <button>
-              <img src="/iconBell.svg" alt="Bell Icon" className="h-7" />
+              <img src="/iconBelll.svg" alt="Bell Icon" className="h-7" />
             </button>
             {showBellMenu && (
               <div className="absolute right-0 top-full mt-0 w-48 h-48 bg-white border border-gray-300 rounded-lg shadow-md "></div>
@@ -132,7 +132,7 @@ export default function Header() {
             onMouseLeave={handleMouseLeaveProfile}
           >
             <button>
-              <img src="/iconProfile.svg" alt="Profile Icon" className="h-7" />
+              <img src="/iconProfilee.svg" alt="Profile Icon" className="h-7" />
             </button>
             {showProfileMenu && (
               <div className="absolute right-0 top-full mt-0 w-48 bg-white border border-gray-300 rounded-lg shadow-md p-4">
