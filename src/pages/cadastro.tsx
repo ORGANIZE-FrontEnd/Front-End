@@ -12,8 +12,7 @@ import Alert from "@/app/atoms/Alert";
 const validators = {
   email: (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
   cpf: (cpf: string) => /^[0-9]{11}$/.test(cpf),
-  phone: (phone: string) =>
-    /^\(?\d{2}\)?[\s-]?[\s9]?\d{4}-?\d{4}$/.test(phone),
+  phone: (phone: string) => /^\(?\d{2}\)?[\s-]?[\s9]?\d{4}-?\d{4}$/.test(phone),
   password: (password: string) => password.trim() !== "",
   birthDate: (date: string) => date.trim() !== "",
 };
@@ -22,7 +21,8 @@ const validators = {
 const validationMessages = {
   email: "Por favor, insira um e-mail válido.",
   cpf: "Por favor, insira um CPF válido com 11 dígitos.",
-  phone: "Por favor, insira um número de telefone válido no formato brasileiro.",
+  phone:
+    "Por favor, insira um número de telefone válido no formato brasileiro.",
   password: "Por favor, insira uma senha.",
   birthDate: "Por favor, insira uma data de nascimento.",
 };

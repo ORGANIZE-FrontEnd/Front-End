@@ -22,12 +22,11 @@ const defaultUser: User = {
 
 const localStorageStorage = createJSONStorage(() => localStorage);
 
-
 export const userAtom = atomWithStorage<User>(
-    "user",
-    defaultUser,
-    localStorageStorage as SyncStorage<User>
-  );
+  "user",
+  defaultUser,
+  localStorageStorage as SyncStorage<User>
+);
 export const updateUserAtom = atom(null, (get, set, newUser: Partial<User>) => {
   const currentUser = get(userAtom);
   set(userAtom, { ...currentUser, ...newUser });

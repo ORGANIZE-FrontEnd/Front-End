@@ -4,9 +4,8 @@ import { useAtom } from "jotai";
 import { userAtom } from "./authAtom";
 
 const useRequireAuth = () => {
-    const router = useRouter();
-    const [user] = useAtom(userAtom);
-    
+  const router = useRouter();
+  const [user] = useAtom(userAtom);
 
   useEffect(() => {
     if (!user.isAuthenticated) {
