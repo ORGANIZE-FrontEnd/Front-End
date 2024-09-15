@@ -2,6 +2,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import Button from "../atoms/Button";
+import { useAtom } from "jotai";
+import { userAtom } from "../atoms/authAtom";
 
 const links = [
   { href: "/home", label: "Visao geral" },
@@ -20,17 +23,16 @@ export default function Header() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
+  const [user, setUser] = useAtom(userAtom);
 
   useEffect(() => {
     const activeLink = document.querySelector(".active-link") as HTMLElement;
     const navContainer = navRef.current;
 
     if (activeLink && navContainer) {
-      // Calcula a posição relativa ao contêiner de navegação
       const navContainerRect = navContainer.getBoundingClientRect();
       const activeLinkRect = activeLink.getBoundingClientRect();
 
-      // Ajusta a posição da barra com base no contêiner
       setIndicatorPosition(activeLinkRect.left);
       setIndicatorWidth(activeLink.offsetWidth + 5);
     }
@@ -99,7 +101,6 @@ export default function Header() {
               </li>
             ))}
           </ul>
-          {/* Indicator bar */}
           <div
             className="absolute bottom-0 h-0.5 bg-white transition-all duration-100"
             style={{
@@ -117,10 +118,10 @@ export default function Header() {
             onMouseLeave={handleMouseLeaveBell}
           >
             <button>
-              <img src="/iconBell.svg" alt="Bell Icon" className="h-7" />
+              <img src="/iconBelll.svg" alt="Bell Icon" className="h-7" />
             </button>
             {showBellMenu && (
-              <div className="absolute right-0 top-full mt-0 w-48 h-48 bg-white border border-gray-300 rounded-lg shadow-md"></div>
+              <div className="absolute right-0 top-full mt-0 w-48 h-48 bg-white border border-gray-300 rounded-lg shadow-md "></div>
             )}
           </div>
 
@@ -131,10 +132,21 @@ export default function Header() {
             onMouseLeave={handleMouseLeaveProfile}
           >
             <button>
-              <img src="/iconProfile.svg" alt="Profile Icon" className="h-7" />
+              <img src="/iconProfilee.svg" alt="Profile Icon" className="h-7" />
             </button>
             {showProfileMenu && (
-              <div className="absolute right-0 top-full mt-0 w-48 h-48 bg-white border border-gray-300 rounded-lg shadow-md"></div>
+              <div className="absolute right-0 top-full mt-0 w-48 bg-white border border-gray-300 rounded-lg shadow-md p-4">
+                <Button
+                  className="w-full text-black hover:text-green font-medium rounded-lg text-base  py-2.5"
+                  title={"Sair"}
+                  onClick={() =>
+                    setUser({
+                      ...user,
+                      isAuthenticated: false,
+                    })
+                  }
+                />
+              </div>
             )}
           </div>
         </div>
