@@ -65,15 +65,13 @@ const MainContent = () => {
       return;
     }
 
-    // If all validations pass, save the user and show success alert
     setUser({ ...formData, isAuthenticated: false });
     setAlertMessage("Usuário criado com sucesso!");
     setAlertType("success");
 
-    // Redirect to login after a brief delay
     setTimeout(() => {
       router.push("/login");
-    }, 2000); // Adjust timing as needed
+    }, 2000);
   };
 
   const handleCloseAlert = () => {

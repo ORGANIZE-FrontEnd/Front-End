@@ -6,6 +6,7 @@ type ButtonProps = {
   buttonLink?: string;
   className?: string;
   onClick?: () => void; // Allow passing custom onClick if needed
+  type: "submit" | "reset" | "button" | undefined;
 };
 
 const Button: React.FC<ButtonProps> = ({
@@ -13,6 +14,7 @@ const Button: React.FC<ButtonProps> = ({
   buttonLink,
   className,
   onClick,
+  type,
 }) => {
   const router = useRouter();
 
@@ -26,7 +28,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <button
-      type="button"
+      type={type}
       onClick={handleClick}
       className={`${className ? `${className}` : ""}`}
     >

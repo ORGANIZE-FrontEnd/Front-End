@@ -11,6 +11,8 @@ const config: Config = {
         bgWhite: "#f2f4ef",
         green800: "#117641",
         green300: "#86efac",
+        green500: "#129E3F",
+        grey: "#787878",
       },
     },
   },
