@@ -1,6 +1,10 @@
+import useLogUser from "@/app/atoms/useLogUser";
+import useRequireAuth from "@/app/atoms/useRequireAuth";
 import Header from "@/app/organisms/Header";
 
 export default function Home() {
+  useLogUser();
+  useRequireAuth();
   return (
     <>
       <Header />
