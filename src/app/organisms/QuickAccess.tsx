@@ -7,7 +7,7 @@ export default function QuickAccess() {
   const [isModalExpensesOpen, setIsModalExpensesOpen] = useState(false);
   const [isModalReceiptsOpen, setIsModalReceiptsOpen] = useState(false);
   const [isLimitExpensesOpen, setIsLimitExpensesOpen] = useState(false);
-  const [isInvestmentsOpen, setIsInvestmentsOpen] = useState(true);
+  const [isInvestmentsOpen, setIsInvestmentsOpen] = useState(false);
 
   const handleLimitExpensesOpen = () => {
     setIsLimitExpensesOpen(true);
