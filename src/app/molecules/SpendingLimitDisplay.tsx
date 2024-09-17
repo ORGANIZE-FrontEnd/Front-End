@@ -17,7 +17,7 @@ export default function SpendingLimitDisplay(props: SpendingLimitDisplayProps) {
     <div className="pt-8 px-8 sm:px-16 md:px-24 lg:px-32 xl:px-64">
       <div
         style={{ padding: "0rem 0rem 0" }}
-        className="bg-white rounded-lg py-4 h-screen shadow-black shadow-lg"
+        className="bg-white rounded-lg py-4"
       >
         <div className="flex justify-between border-b-2 items-end p-5">
           <div className="p-5">
