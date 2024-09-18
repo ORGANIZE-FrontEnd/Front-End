@@ -1,3 +1,4 @@
+import MyBillsCard from "@/app/molecules/MyBillsCard";
 import Header from "@/app/organisms/Header";
 
 export default function Home() {
@@ -75,6 +76,7 @@ export default function Home() {
             </ul>
           </div>
         </div>
+      <MyBillsCard />
       </div>
     </>
   );
