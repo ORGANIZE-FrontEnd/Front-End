@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { useAtom } from "jotai";
 import ModalReceiptExpenses from "../molecules/ModalReceiptExpenses";
 import LimitExpenses from "../atoms/LimitExpenses";
 import ModalIntestments from "../atoms/ModalIntestment";
+import {
+  totalIncomeAtom,
+  totalExpensesAtom,
+} from "@/app/atoms/transactionsAtom"; // Import the atoms
+import { useState } from "react";
 
 export default function QuickAccess() {
   const [isModalExpensesOpen, setIsModalExpensesOpen] = useState(false);
@@ -9,15 +14,22 @@ export default function QuickAccess() {
   const [isLimitExpensesOpen, setIsLimitExpensesOpen] = useState(false);
   const [isInvestmentsOpen, setIsInvestmentsOpen] = useState(false);
 
+  // Use the derived total atoms
+  const [totalIncome] = useAtom(totalIncomeAtom);
+  const [totalExpenses] = useAtom(totalExpensesAtom);
+
   const handleLimitExpensesOpen = () => {
     setIsLimitExpensesOpen(true);
   };
+
   const handleCloseLimitExpenses = () => {
     setIsLimitExpensesOpen(false);
   };
+
   const handleOpenExpenses = () => {
     setIsModalExpensesOpen(true);
   };
+
   const handleCloseModalExpenses = () => {
     setIsModalExpensesOpen(false);
   };
@@ -33,6 +45,7 @@ export default function QuickAccess() {
   const handleOpenInvestments = () => {
     setIsInvestmentsOpen(true);
   };
+
   const handleCloseInvestments = () => {
     setIsInvestmentsOpen(false);
   };
@@ -51,11 +64,15 @@ export default function QuickAccess() {
         <div className="grid grid-flow-col gap-4">
           <div className="flex flex-col rounded-lg border border-white bg-[#fefdf9] shadow-lg flex-grow ml-4 items-center justify-center h-16">
             <p className="text-gray-500 font-semibold">receita mensal</p>
-            <p className="text-lg font-medium text-[#1ABE4E]">R$ 0,00</p>
+            <p className="text-lg font-medium text-[#1ABE4E]">
+              R$ {totalIncome.toFixed(2)}
+            </p>
           </div>
           <div className="flex flex-col rounded-lg border border-white bg-[#fefdf9] shadow-lg flex-grow ml-4 items-center justify-center h-16">
             <p className="text-gray-500 font-semibold">despesa mensal</p>
-            <p className="text-lg font-medium text-red-600">R$ 0,00</p>
+            <p className="text-lg font-medium text-red-600">
+              R$ {totalExpenses.toFixed(2)}
+            </p>
           </div>
           <a
             href="#"
@@ -94,7 +111,7 @@ export default function QuickAccess() {
             <ModalReceiptExpenses
               show={isModalReceiptsOpen}
               onClose={handleCloseModalReceipts}
-              type={"receipt"}
+              type={"income"}
             />
           </li>
           <li>
@@ -109,7 +126,7 @@ export default function QuickAccess() {
               show={isInvestmentsOpen}
               onClose={handleCloseInvestments}
               title={"Novo Investimento"}
-            ></ModalIntestments>
+            />
           </li>
           <li>
             <button
@@ -122,7 +139,7 @@ export default function QuickAccess() {
             <LimitExpenses
               show={isLimitExpensesOpen}
               onClose={handleCloseLimitExpenses}
-            ></LimitExpenses>
+            />
           </li>
         </ul>
       </div>
