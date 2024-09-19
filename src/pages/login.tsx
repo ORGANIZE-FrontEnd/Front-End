@@ -22,7 +22,7 @@ const MainContent = () => {
 
   useEffect(() => {
     if (user.isAuthenticated) {
-      router.push("/home");
+      router.push("/relatorios");
     }
   }, [user, router]);
 
