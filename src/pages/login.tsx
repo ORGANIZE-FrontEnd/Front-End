@@ -67,8 +67,7 @@ const MainContent = () => {
       <Button
         title="Entrar"
         onClick={handleLogin}
-        className="w-2/6 focus:outline-none text-white bg-green hover:bg-green800 focus:ring-4 focus:ring-green300 font-medium rounded-lg text-base px-5 py-2.5 me-2 mb-2"
-      />
+        className="w-2/6 focus:outline-none text-white bg-green hover:bg-green800 focus:ring-4 focus:ring-green300 font-medium rounded-lg text-base px-5 py-2.5 me-2 mb-2" type={"button"}      />
       {error && <Alert message={error} type="error" onClose={handleCloseAlert} />}
     </div>
   );
