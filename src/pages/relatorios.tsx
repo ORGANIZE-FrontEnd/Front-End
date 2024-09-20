@@ -7,6 +7,9 @@ import Container from "@/app/atoms/Container";
 import DonutChart from "@/app/atoms/DonutChart";
 import CategoryTable from "@/app/atoms/CategoryTable";
 import BarChart from "@/app/atoms/BarChart";
+import SummaryTable from "@/app/atoms/SummaryTable";
+import { useAtom } from "jotai";
+import { filterAtom } from "@/app/atoms/filterAtom";
 
 export default function Relatorios() {
   useLogUser();
@@ -15,6 +18,12 @@ export default function Relatorios() {
   const [activeTab, setActiveTab] = useState<"movimentacoes" | "categorias">(
     "categorias"
   );
+  const [filter] = useAtom(filterAtom);
+
+
+  console.log("Current filter:", filter);
+
+
 
   return (
     <>
@@ -55,6 +64,7 @@ export default function Relatorios() {
             ) : (
               <>
                 <BarChart />
+                <SummaryTable filterType={filter} />
               </>
             )}
           </div>

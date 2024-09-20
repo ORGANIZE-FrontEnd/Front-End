@@ -13,6 +13,7 @@ import { useAtom } from "jotai";
 import { transactionsAtom } from "./transactionsAtom";
 import { currentDateAtom } from "./DateSwitcher";
 import formatDate from "./formatDate"; // Import the formatDate function
+import { filterAtom } from "./filterAtom";
 
 ChartJS.register(
   CategoryScale,
@@ -26,13 +27,23 @@ ChartJS.register(
 const BarChart: React.FC = () => {
   const [transactions] = useAtom(transactionsAtom);
   const [currentDate] = useAtom(currentDateAtom);
-  const [filter, setFilter] = useState<"day" | "week" | "month">("month");
+  const [filter, setFilter] = useAtom(filterAtom);
 
   const filteredData = useMemo(() => {
     const startDate = new Date(currentDate);
 
     let incomeTotals: { [key: string]: number } = {};
     let expenseTotals: { [key: string]: number } = {};
+
+    const normalizeDate = (dateString: string) => {
+      const date = new Date(dateString);
+      // Normalize date to local time
+      return new Date(
+        date.getUTCFullYear(),
+        date.getUTCMonth(),
+        date.getUTCDate()
+      );
+    };
 
     if (filter === "day") {
       const daysInMonth = new Date(
@@ -52,7 +63,7 @@ const BarChart: React.FC = () => {
       }
 
       transactions.incomes.forEach((item) => {
-        const itemDate = new Date(item.date);
+        const itemDate = normalizeDate(item.date);
         if (
           itemDate.getMonth() === startDate.getMonth() &&
           itemDate.getFullYear() === startDate.getFullYear()
@@ -63,7 +74,7 @@ const BarChart: React.FC = () => {
       });
 
       transactions.expenses.forEach((item) => {
-        const itemDate = new Date(item.date);
+        const itemDate = normalizeDate(item.date);
         if (
           itemDate.getMonth() === startDate.getMonth() &&
           itemDate.getFullYear() === startDate.getFullYear()
@@ -86,7 +97,7 @@ const BarChart: React.FC = () => {
       }
 
       transactions.incomes.forEach((item) => {
-        const itemDate = new Date(item.date);
+        const itemDate = normalizeDate(item.date);
         if (itemDate >= startOfWeek && itemDate <= endOfWeek) {
           incomeTotals[formatDate(itemDate.toISOString(), "dayMonth")] +=
             item.price;
@@ -94,7 +105,7 @@ const BarChart: React.FC = () => {
       });
 
       transactions.expenses.forEach((item) => {
-        const itemDate = new Date(item.date);
+        const itemDate = normalizeDate(item.date);
         if (itemDate >= startOfWeek && itemDate <= endOfWeek) {
           expenseTotals[formatDate(itemDate.toISOString(), "dayMonth")] +=
             item.price;
@@ -105,7 +116,7 @@ const BarChart: React.FC = () => {
       const year = startDate.getFullYear();
 
       transactions.incomes.forEach((item) => {
-        const itemDate = new Date(item.date);
+        const itemDate = normalizeDate(item.date);
         if (itemDate.getMonth() === month && itemDate.getFullYear() === year) {
           incomeTotals[`${month + 1}-${year}`] =
             (incomeTotals[`${month + 1}-${year}`] || 0) + item.price;
@@ -113,7 +124,7 @@ const BarChart: React.FC = () => {
       });
 
       transactions.expenses.forEach((item) => {
-        const itemDate = new Date(item.date);
+        const itemDate = normalizeDate(item.date);
         if (itemDate.getMonth() === month && itemDate.getFullYear() === year) {
           expenseTotals[`${month + 1}-${year}`] =
             (expenseTotals[`${month + 1}-${year}`] || 0) + item.price;
