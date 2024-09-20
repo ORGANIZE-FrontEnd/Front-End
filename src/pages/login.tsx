@@ -22,7 +22,7 @@ const MainContent = () => {
 
   useEffect(() => {
     if (user.isAuthenticated) {
-      router.push("/relatorios");
+      router.push("/home");
     }
   }, [user, router]);
 
@@ -65,6 +65,7 @@ const MainContent = () => {
         onChange={(e) => setInputPassword(e.target.value)}
       />
       <Button
+        type="button"
         title="Entrar"
         onClick={handleLogin}
         className="w-2/6 focus:outline-none text-white bg-green hover:bg-green800 focus:ring-4 focus:ring-green300 font-medium rounded-lg text-base px-5 py-2.5 me-2 mb-2"

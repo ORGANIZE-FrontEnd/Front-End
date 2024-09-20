@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useMemo } from "react";
 import { Doughnut } from "react-chartjs-2";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { useAtom } from "jotai";
 import { transactionsAtom } from "./transactionsAtom";
+import { currentDateAtom } from "./DateSwitcher";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -19,11 +20,39 @@ const groupByCategory = (items: any[]) => {
   return grouped;
 };
 
-// DonutChart component
 const DonutChart: React.FC = () => {
   const [transactions] = useAtom(transactionsAtom);
-  const incomeData = groupByCategory(transactions.incomes);
-  const expenseData = groupByCategory(transactions.expenses);
+  const [currentDate] = useAtom(currentDateAtom);
+
+  // Filter transactions for the selected month and year
+  const filteredTransactions = useMemo(() => {
+    const selectedMonth = currentDate.getMonth();
+    const selectedYear = currentDate.getFullYear();
+
+    const filteredIncomes = transactions.incomes.filter((item) => {
+      const itemDate = new Date(item.date);
+      return (
+        itemDate.getMonth() === selectedMonth &&
+        itemDate.getFullYear() === selectedYear
+      );
+    });
+
+    const filteredExpenses = transactions.expenses.filter((item) => {
+      const itemDate = new Date(item.date);
+      return (
+        itemDate.getMonth() === selectedMonth &&
+        itemDate.getFullYear() === selectedYear
+      );
+    });
+
+    return {
+      incomes: filteredIncomes,
+      expenses: filteredExpenses,
+    };
+  }, [transactions, currentDate]);
+
+  const incomeData = groupByCategory(filteredTransactions.incomes);
+  const expenseData = groupByCategory(filteredTransactions.expenses);
 
   const incomeCategories = Object.keys(incomeData);
   const incomeValues = Object.values(incomeData);
@@ -59,7 +88,7 @@ const DonutChart: React.FC = () => {
 
   const options = {
     responsive: true,
-    cutout: "70%", // or a numeric value, e.g., 70
+    cutout: "70%",
     plugins: {
       legend: {
         position: "top" as const,
@@ -80,7 +109,8 @@ const DonutChart: React.FC = () => {
   };
 
   const hasTransactions =
-    transactions.incomes.length > 0 || transactions.expenses.length > 0;
+    filteredTransactions.incomes.length > 0 ||
+    filteredTransactions.expenses.length > 0;
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
@@ -102,12 +132,11 @@ const DonutChart: React.FC = () => {
                 className="text-center font-semibold text-lg text-gray-800 bg-white p-2 rounded-full"
                 style={{ zIndex: 1 }}
               >
-                Expenses
+                Despesas
               </h3>
             </div>
           </div>
 
-          {/* Donut chart for Incomes */}
           <div className="relative w-1/2 max-w-xs">
             <Doughnut data={incomeChartData} options={options} />
             <div
@@ -118,7 +147,7 @@ const DonutChart: React.FC = () => {
                 className="text-center font-semibold text-lg text-gray-800 bg-white p-2 rounded-full"
                 style={{ zIndex: 1 }}
               >
-                Incomes
+                Receitas
               </h3>
             </div>
           </div>

@@ -24,3 +24,38 @@ export const totalExpensesAtom = atom((get) => {
     0
   );
 });
+
+// Atoms to calculate current month's income and expenses
+export const currentMonthIncomeAtom = atom((get) => {
+  const transactions = get(transactionsAtom);
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+
+  return transactions.incomes.reduce((total, transaction) => {
+    const transactionDate = new Date(transaction.date);
+    if (
+      transactionDate.getMonth() === currentMonth &&
+      transactionDate.getFullYear() === currentYear
+    ) {
+      return total + transaction.price;
+    }
+    return total;
+  }, 0);
+});
+
+export const currentMonthExpenseAtom = atom((get) => {
+  const transactions = get(transactionsAtom);
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+
+  return transactions.expenses.reduce((total, transaction) => {
+    const transactionDate = new Date(transaction.date);
+    if (
+      transactionDate.getMonth() === currentMonth &&
+      transactionDate.getFullYear() === currentYear
+    ) {
+      return total + transaction.price;
+    }
+    return total;
+  }, 0);
+});

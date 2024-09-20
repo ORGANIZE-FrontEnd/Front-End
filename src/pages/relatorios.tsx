@@ -4,8 +4,9 @@ import Header from "@/app/organisms/Header";
 import SpendingLimitDisplay from "@/app/molecules/SpendingLimitDisplay";
 import { useState } from "react";
 import Container from "@/app/atoms/Container";
-import PieChart from "@/app/atoms/PieChart";
+import DonutChart from "@/app/atoms/DonutChart";
 import CategoryTable from "@/app/atoms/CategoryTable";
+import BarChart from "@/app/atoms/BarChart";
 
 export default function Relatorios() {
   useLogUser();
@@ -19,7 +20,7 @@ export default function Relatorios() {
     <>
       <Header />
       <Container className="">
-        <SpendingLimitDisplay title={"Relatórios"} />
+        <SpendingLimitDisplay title={"Relatórios"} displayType={"relatorios"} />
         <div className="bg-white rounded-b-lg py-1.5 min-h-[600px] shadow-md">
           <div className="flex border-b-2">
             <button
@@ -45,18 +46,16 @@ export default function Relatorios() {
               Entradas X Saídas
             </button>
           </div>
-          <div className="p-5">
+          <div className="py-5">
             {activeTab === "categorias" ? (
               <>
-                <PieChart />
+                <DonutChart />
                 <CategoryTable />
               </>
             ) : (
-              <p className="text-center text-gray-500 pt-24">
-                {/* Aqui eh onde vai ficar o outro grafico */}
-                Nenhuma categoria encontrada. Por favor, adicione novas
-                categorias.
-              </p>
+              <>
+                <BarChart />
+              </>
             )}
           </div>
         </div>

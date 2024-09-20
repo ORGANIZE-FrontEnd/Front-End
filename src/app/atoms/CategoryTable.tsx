@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useAtom } from "jotai";
 import { transactionsAtom } from "./transactionsAtom";
+import { currentDateAtom } from "./DateSwitcher";
 import formatDate from "./formatDate";
 
 const formatCurrency = (value: number) => `${value.toFixed(2)}`;
 
 const CategoryTable: React.FC = () => {
   const [transactions] = useAtom(transactionsAtom);
-  // Use a Set to keep track of expanded categories
+  const [currentDate] = useAtom(currentDateAtom);
   const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
     new Set()
   );
@@ -23,6 +24,33 @@ const CategoryTable: React.FC = () => {
       return newSet;
     });
   };
+
+  // Filter transactions for the selected month and year
+  const filteredTransactions = useMemo(() => {
+    const selectedMonth = currentDate.getMonth();
+    const selectedYear = currentDate.getFullYear();
+
+    const filteredIncomes = transactions.incomes.filter((item) => {
+      const itemDate = new Date(item.date);
+      return (
+        itemDate.getMonth() === selectedMonth &&
+        itemDate.getFullYear() === selectedYear
+      );
+    });
+
+    const filteredExpenses = transactions.expenses.filter((item) => {
+      const itemDate = new Date(item.date);
+      return (
+        itemDate.getMonth() === selectedMonth &&
+        itemDate.getFullYear() === selectedYear
+      );
+    });
+
+    return {
+      incomes: filteredIncomes,
+      expenses: filteredExpenses,
+    };
+  }, [transactions, currentDate]);
 
   const renderTableRows = (
     data: any[],
@@ -41,8 +69,8 @@ const CategoryTable: React.FC = () => {
       const percentage =
         (total /
           (categoryType === "incomes"
-            ? transactions.incomes
-            : transactions.expenses
+            ? filteredTransactions.incomes
+            : filteredTransactions.expenses
           ).reduce((sum, item) => sum + item.price, 0)) *
         100;
 
@@ -60,8 +88,13 @@ const CategoryTable: React.FC = () => {
             <td className="text-grey p-2 font-medium">
               {percentage.toFixed(2)}%
             </td>
-            <td className="text-end text-red-600 p-2 font-medium">
-              R$ -{formatCurrency(total)}
+            <td
+              className={`text-end p-2 font-medium ${categoryType === "incomes" ? "text-green" : "text-red-600"}`}
+            >
+              R${" "}
+              {categoryType === "incomes"
+                ? formatCurrency(total)
+                : `-${formatCurrency(total)}`}
             </td>
           </tr>
           {expandedCategories.has(category) && (
@@ -92,13 +125,11 @@ const CategoryTable: React.FC = () => {
     });
   };
 
-  if (transactions.incomes.length === 0 && transactions.expenses.length === 0) {
-    return (
-      <p className="text-center text-gray-500 pt-24">
-        Nenhuma movimentação até o momento. Que tal começar a adicionar seus
-        gastos agora?
-      </p>
-    );
+  if (
+    filteredTransactions.incomes.length === 0 &&
+    filteredTransactions.expenses.length === 0
+  ) {
+    return null; // Show nothing if no data for the selected month
   }
 
   return (
@@ -109,7 +140,9 @@ const CategoryTable: React.FC = () => {
             Categorias de despesa
           </h3>
           <table className="w-full border-collapse">
-            <tbody>{renderTableRows(transactions.expenses, "expenses")}</tbody>
+            <tbody>
+              {renderTableRows(filteredTransactions.expenses, "expenses")}
+            </tbody>
           </table>
         </div>
         <div>
@@ -117,7 +150,9 @@ const CategoryTable: React.FC = () => {
             Categorias de receita
           </h3>
           <table className="w-full border-collapse">
-            <tbody>{renderTableRows(transactions.incomes, "incomes")}</tbody>
+            <tbody>
+              {renderTableRows(filteredTransactions.incomes, "incomes")}
+            </tbody>
           </table>
         </div>
       </div>

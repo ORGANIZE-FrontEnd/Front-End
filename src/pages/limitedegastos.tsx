@@ -9,7 +9,10 @@ export default function LimiteDeGastos() {
   return (
     <>
       <Header />
-      <SpendingLimitDisplay title={"Limite de gastos"} />
+      <SpendingLimitDisplay
+        title={"Limite de gastos"}
+        displayType={"limiteDeGastos"}
+      />
       <div className="px-8 sm:px-16 md:px-24 lg:px-32 xl:px-64">
         <div
           style={{ padding: "0rem 0rem 0" }}
