@@ -2,12 +2,13 @@ import React, { useMemo } from "react";
 import { useAtom } from "jotai";
 import { transactionsAtom } from "./transactionsAtom";
 import { currentDateAtom } from "./DateSwitcher";
-import formatDate from "@/app/atoms/formatDate";
+import { calculateSummary } from "./calculateTransactions";
+
 const formatCurrency = (value: number) => `R$ ${value.toFixed(2)}`;
 
-type FilterType = "day" | "week" | "month";
+export type FilterType = "day" | "week" | "month";
 
-type SummaryTableProps = {
+export type SummaryTableProps = {
   filterType: FilterType;
 };
 
@@ -15,99 +16,10 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ filterType }) => {
   const [transactions] = useAtom(transactionsAtom);
   const [currentDate] = useAtom(currentDateAtom);
 
-  console.log("Current filter at Sumarytable:", filterType);
-
-  const filteredTransactions = useMemo(() => {
-    const selectedDate = new Date(currentDate);
-    let filteredIncomes = [];
-    let filteredExpenses = [];
-    let period = "";
-
-    if (filterType === "day") {
-      filteredIncomes = transactions.incomes.filter((item) => {
-        const itemDate = new Date(item.date);
-        return (
-          itemDate.getDate() === selectedDate.getDate() &&
-          itemDate.getMonth() === selectedDate.getMonth() &&
-          itemDate.getFullYear() === selectedDate.getFullYear()
-        );
-      });
-
-      filteredExpenses = transactions.expenses.filter((item) => {
-        const itemDate = new Date(item.date);
-        return (
-          itemDate.getDate() === selectedDate.getDate() &&
-          itemDate.getMonth() === selectedDate.getMonth() &&
-          itemDate.getFullYear() === selectedDate.getFullYear()
-        );
-      });
-
-      period = formatDate(selectedDate.toISOString(), "dayMonthYear");
-    } else if (filterType === "week") {
-      const startOfWeek = new Date(selectedDate);
-      startOfWeek.setDate(selectedDate.getDate() - selectedDate.getDay()); // Sunday
-      const endOfWeek = new Date(startOfWeek);
-      endOfWeek.setDate(startOfWeek.getDate() + 6); // Saturday
-
-      filteredIncomes = transactions.incomes.filter((item) => {
-        const itemDate = new Date(item.date);
-        return itemDate >= startOfWeek && itemDate <= endOfWeek;
-      });
-
-      filteredExpenses = transactions.expenses.filter((item) => {
-        const itemDate = new Date(item.date);
-        return itemDate >= startOfWeek && itemDate <= endOfWeek;
-      });
-
-      period = `${formatDate(startOfWeek.toISOString(), "dayMonth")} - ${formatDate(endOfWeek.toISOString(), "dayMonth")}`;
-    } else if (filterType === "month") {
-      const selectedMonth = selectedDate.getMonth();
-      const selectedYear = selectedDate.getFullYear();
-
-      filteredIncomes = transactions.incomes.filter((item) => {
-        const itemDate = new Date(item.date);
-        return (
-          itemDate.getMonth() === selectedMonth &&
-          itemDate.getFullYear() === selectedYear
-        );
-      });
-
-      filteredExpenses = transactions.expenses.filter((item) => {
-        const itemDate = new Date(item.date);
-        return (
-          itemDate.getMonth() === selectedMonth &&
-          itemDate.getFullYear() === selectedYear
-        );
-      });
-
-      period = formatDate(selectedDate.toISOString(), "monthYear");
-    }
-
-    const totalIncomes = filteredIncomes.reduce(
-      (sum, item) => sum + item.price,
-      0
-    );
-    const totalExpenses = filteredExpenses.reduce(
-      (sum, item) => sum + item.price,
-      0
-    );
-    const result = totalIncomes - totalExpenses;
-
-    // Cumulative balance (sum of all transactions)
-    const totalBalance =
-      transactions.incomes.reduce((sum, item) => sum + item.price, 0) -
-      transactions.expenses.reduce((sum, item) => sum + item.price, 0);
-
-    return {
-      incomes: filteredIncomes,
-      expenses: filteredExpenses,
-      totalIncomes,
-      totalExpenses,
-      result,
-      totalBalance,
-      period,
-    };
-  }, [transactions, currentDate, filterType]);
+  const filteredTransactions = useMemo(
+    () => calculateSummary(transactions, currentDate, filterType),
+    [transactions, currentDate, filterType]
+  );
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
@@ -123,29 +35,23 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ filterType }) => {
           </tr>
         </thead>
         <tbody>
-          <tr className="border-b border-gray-100">
-            <td className="p-2 text-grey font-medium">
-              {filteredTransactions.period}
-            </td>
-            <td className="p-2 text-green">
-              {formatCurrency(filteredTransactions.totalIncomes)}
-            </td>
-            <td className="p-2 text-red-600">
-              {formatCurrency(filteredTransactions.totalExpenses)}
-            </td>
-            <td className="p-2 text-green">
-              {formatCurrency(filteredTransactions.result)}
-            </td>
-            <td
-              className={`p-2 text-end ${
-                filteredTransactions.totalBalance >= 0
-                  ? "text-green"
-                  : "text-red-600"
-              }`}
-            >
-              {formatCurrency(filteredTransactions.totalBalance)}
-            </td>
-          </tr>
+          {filteredTransactions.periods.map((period) => (
+            <tr key={period} className="border-b border-gray-100">
+              <td className="p-2 text-grey font-medium">{period}</td>
+              <td className="p-2 text-green">
+                {formatCurrency(filteredTransactions.incomesByPeriod[period])}
+              </td>
+              <td className="p-2 text-red-600">
+                {formatCurrency(filteredTransactions.expensesByPeriod[period])}
+              </td>
+              <td className={`p-2 ${filteredTransactions.resultsByPeriod[period] < 0 ? "text-red-600" : "text-green"}`}>
+                {formatCurrency(filteredTransactions.resultsByPeriod[period])}
+              </td>
+              <td className={`p-2 text-end ${filteredTransactions.balanceByPeriod[period] >= 0 ? "text-green" : "text-red-600"}`}>
+                {formatCurrency(filteredTransactions.balanceByPeriod[period])}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </div>
