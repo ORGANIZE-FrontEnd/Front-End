@@ -1,12 +1,16 @@
 import { useState } from "react";
-import { WordSwitcher } from "../atoms/WordSwitcher";
+import { DateSwitcher } from "../atoms/DateSwitcher";
 import { IoEyeSharp, IoEyeOffSharp } from "react-icons/io5";
 
 type SpendingLimitDisplayProps = {
   title: string;
+  displayType: "investimentos" | "limiteDeGastos" | "relatorios";
 };
 
-export default function SpendingLimitDisplay(props: SpendingLimitDisplayProps) {
+export default function SpendingLimitDisplay({
+  title,
+  displayType,
+}: SpendingLimitDisplayProps) {
   const [isVisible, setIsVisible] = useState(true);
 
   const handleToggle = () => {
@@ -14,23 +18,26 @@ export default function SpendingLimitDisplay(props: SpendingLimitDisplayProps) {
   };
 
   return (
-    <div className="pt-8 px-8 sm:px-16 md:px-24 lg:px-32 xl:px-64">
-      <div
-        style={{ padding: "0rem 0rem 0" }}
-        className="bg-white rounded-lg py-4"
-      >
-        <div className="flex justify-center border-b-2 items-end p-5 sm:gap-10 md:gap-20 lg:gap-40 xl:gap-80">
-          <div className="p-5">
+    <div
+      style={{ padding: "0rem 0rem 0" }}
+      className="bg-white rounded-lg py-4"
+    >
+      <div className="grid grid-cols-3 border-b-2 items-center p-5">
+        {(displayType === "limiteDeGastos" || displayType === "relatorios") && (
+          <div className="justify-self-start">
             <p className="font-semibold text-xl" style={{ color: "#787878" }}>
-              {props.title}
+              {title}
             </p>
           </div>
+        )}
 
-          <div className="p-5">
-            <WordSwitcher />
-          </div>
+        {displayType === "investimentos" && <div></div>}
+        <div className="justify-self-center">
+          <DateSwitcher />
+        </div>
 
-          <div className="flex items-center gap-2 p-5">
+        {displayType === "limiteDeGastos" && (
+          <div className="flex items-center gap-2 justify-self-end">
             <div className="cursor-pointer" onClick={handleToggle}>
               {isVisible ? (
                 <IoEyeSharp
@@ -52,7 +59,7 @@ export default function SpendingLimitDisplay(props: SpendingLimitDisplayProps) {
               Mostrar previsão no gráfico
             </button>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );

@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
+import { useAtom } from "jotai";
 import FormFooter from "./FormFooter";
+import { balanceAtom, transactionsAtom } from "@/app/atoms/transactionsAtom";
 
 type ModalFormProps = {
-  type: "receipt" | "expense";
+  type: "income" | "expense";
   onClose: () => void;
 };
 
@@ -19,6 +21,8 @@ const ModalForm: React.FC<ModalFormProps> = ({ type, onClose }) => {
   const [fixedExpenseType, setFixedExpenseType] = useState("");
   const [installmentCount, setInstallmentCount] = useState("");
 
+  const [balance, setBalance] = useAtom(balanceAtom);
+  const [transactions, setTransactions] = useAtom(transactionsAtom);
   const paymentTypes = [
     "Semanal",
     "Quinzenal",
@@ -26,7 +30,6 @@ const ModalForm: React.FC<ModalFormProps> = ({ type, onClose }) => {
     "Trimestral",
     "Anual",
   ];
-
   const expenseCategories = [
     "Alimentação",
     "Transporte",
@@ -35,15 +38,13 @@ const ModalForm: React.FC<ModalFormProps> = ({ type, onClose }) => {
     "Lazer",
     "Outros",
   ];
-
   const receiptsCategory = [
     "Empréstimos",
     "Investimentos",
     "Salário",
     "Outras receitas",
   ];
-
-  const categories = type === "receipt" ? receiptsCategory : expenseCategories;
+  const categories = type === "income" ? receiptsCategory : expenseCategories;
 
   useEffect(() => {
     const currentDate = new Date().toISOString().slice(0, 10);
@@ -73,11 +74,13 @@ const ModalForm: React.FC<ModalFormProps> = ({ type, onClose }) => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    // We need to define how will be the logic on defining type of expense/receipt
-    const expenseData = {
+
+    const parsedPrice = parseFloat(price);
+
+    const transactionData = {
       type,
       description,
-      price,
+      price: parsedPrice,
       date: selectedDate,
       card,
       category,
@@ -86,7 +89,28 @@ const ModalForm: React.FC<ModalFormProps> = ({ type, onClose }) => {
       isPurchasedInInstallments,
       installmentCount,
     };
-    console.log("Data Submitted:", expenseData);
+
+    let newBalance = balance;
+    if (type === "expense") {
+      newBalance -= parsedPrice;
+      setTransactions((prev) => ({
+        ...prev,
+        expenses: [...prev.expenses, transactionData],
+      }));
+    } else {
+      newBalance += parsedPrice;
+      setTransactions((prev) => ({
+        ...prev,
+        incomes: [...prev.incomes, transactionData],
+      }));
+    }
+
+    setBalance(newBalance);
+
+    console.log("Transaction Submitted:", transactionData);
+    console.log("Updated Balance:", newBalance);
+    console.log("new array of transactions: ", transactions);
+
     onClose();
   };
 
@@ -202,7 +226,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ type, onClose }) => {
                   htmlFor="default-checkbox"
                   className="ms-2 text-sm font-medium text-grey dark:text-gray-300"
                 >
-                  {type === "receipt"
+                  {type === "income"
                     ? "é uma receita fixa "
                     : "é uma despesa fixa "}
                 </label>
@@ -256,7 +280,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ type, onClose }) => {
           </div>
         </div>
       </div>
-      <FormFooter onClose={onClose} onSubmit={handleSubmit}></FormFooter>
+      <FormFooter onClose={onClose} onSubmit={handleSubmit} />
     </form>
   );
 };

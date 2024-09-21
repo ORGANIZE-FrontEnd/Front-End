@@ -13,6 +13,7 @@ const config: Config = {
         green300: "#86efac",
         green500: "#129E3F",
         grey: "#787878",
+        offWhite: "#FEFDF9",
       },
     },
   },
