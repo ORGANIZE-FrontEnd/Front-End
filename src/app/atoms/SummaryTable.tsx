@@ -44,10 +44,14 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ filterType }) => {
               <td className="p-2 text-red-600">
                 {formatCurrency(filteredTransactions.expensesByPeriod[period])}
               </td>
-              <td className={`p-2 ${filteredTransactions.resultsByPeriod[period] < 0 ? "text-red-600" : "text-green"}`}>
+              <td
+                className={`p-2 ${filteredTransactions.resultsByPeriod[period] < 0 ? "text-red-600" : "text-green"}`}
+              >
                 {formatCurrency(filteredTransactions.resultsByPeriod[period])}
               </td>
-              <td className={`p-2 text-end ${filteredTransactions.balanceByPeriod[period] >= 0 ? "text-green" : "text-red-600"}`}>
+              <td
+                className={`p-2 text-end ${filteredTransactions.balanceByPeriod[period] >= 0 ? "text-green" : "text-red-600"}`}
+              >
                 {formatCurrency(filteredTransactions.balanceByPeriod[period])}
               </td>
             </tr>

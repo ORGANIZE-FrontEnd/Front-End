@@ -20,10 +20,7 @@ export default function Relatorios() {
   );
   const [filter] = useAtom(filterAtom);
 
-
   console.log("Current filter:", filter);
-
-
 
   return (
     <>
