@@ -10,7 +10,7 @@ type SpendingLimitDisplayProps = {
 export default function SpendingLimitDisplay({
   title,
   displayType,
-}: SpendingLimitDisplayProps) {
+}: Readonly<SpendingLimitDisplayProps>) {
   const [isVisible, setIsVisible] = useState(true);
 
   const handleToggle = () => {
@@ -38,7 +38,12 @@ export default function SpendingLimitDisplay({
 
         {displayType === "limiteDeGastos" && (
           <div className="flex items-center gap-2 justify-self-end">
-            <div className="cursor-pointer" onClick={handleToggle}>
+            <button
+              type="button"
+              className="cursor-pointer"
+              onClick={handleToggle}
+              aria-label={isVisible ? "Hide" : "Show"}
+            >
               {isVisible ? (
                 <IoEyeSharp
                   className="text-base"
@@ -50,7 +55,8 @@ export default function SpendingLimitDisplay({
                   style={{ color: "#16C64F" }}
                 />
               )}
-            </div>
+            </button>
+
             <button
               className="font-semibold cursor-pointer hover:text-[#093134]"
               style={{ color: "#16C64F" }}

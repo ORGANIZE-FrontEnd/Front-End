@@ -57,7 +57,11 @@ export default function QuickAccess() {
           <p>Boa tarde,</p>
           <p className="flex items-center gap-1">
             <strong>Trummer!</strong>
-            <img src="/sunAndCloud.svg" className="w-10" />
+            <img
+              src="/sunAndCloud.svg"
+              className="w-10"
+              alt="image of sun and cloud"
+            />
           </p>
         </div>
 
@@ -78,7 +82,11 @@ export default function QuickAccess() {
             href="#"
             className="flex flex-row rounded-lg border border-white bg-[#fefdf9] shadow-lg flex-grow ml-4 items-center justify-center h-16 font-semibold"
           >
-            <img src="/increase.svg" className="w-10 mr-1" />
+            <img
+              src="/increase.svg"
+              className="w-10 mr-1"
+              alt="increase logo"
+            />
             ver relatórios
           </a>
         </div>
@@ -91,7 +99,7 @@ export default function QuickAccess() {
               onClick={handleOpenExpenses}
               className="w-[82px] p-4 h-[103px] flex flex-col items-center pt-4 transition-opacity duration-300 ease-in opacity-100"
             >
-              <img src="/minusSign.svg" className="w-8" />
+              <img src="/minusSign.svg" className="w-8" alt="minus sign " />
               DESPESA
             </button>
             <ModalReceiptExpenses
@@ -105,7 +113,7 @@ export default function QuickAccess() {
               onClick={handleOpenReceipts}
               className="w-[82px] p-4 h-[103px] flex flex-col items-center pt-4 transition-opacity duration-300 ease-in opacity-100"
             >
-              <img src="/plus.svg" className="w-8" />
+              <img src="/plus.svg" className="w-8" alt="plus sign" />
               RECEITA
             </button>
             <ModalReceiptExpenses
@@ -119,7 +127,11 @@ export default function QuickAccess() {
               onClick={handleOpenInvestments}
               className="w-[82px] p-4 h-[103px] flex flex-col items-center pt-4 transition-opacity duration-300 ease-in opacity-100"
             >
-              <img src="/investmentIcon.svg" className="w-8" />
+              <img
+                src="/investmentIcon.svg"
+                className="w-8"
+                alt="investment icon"
+              />
               INVESTIR
             </button>
             <ModalIntestments
@@ -133,7 +145,7 @@ export default function QuickAccess() {
               onClick={handleLimitExpensesOpen}
               className="w-[82px] p-4 h-[103px] flex flex-col items-center pt-4 transition-opacity duration-300 ease-in opacity-100"
             >
-              <img src="/alertSign.svg" className="w-8" />
+              <img src="/alertSign.svg" className="w-8" alt="alert sign icon" />
               LIMITAR GASTOS
             </button>
             <LimitExpenses

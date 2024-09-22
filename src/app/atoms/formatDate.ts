@@ -37,25 +37,28 @@ export const formatDate = (
     case "monthYear":
       return `${monthNames[localDate.getMonth()]} ${localDate.getFullYear()}`;
 
-    case "dayMonth":
+    case "dayMonth": {
       const day = localDate.getDate().toString().padStart(2, "0");
       const month = (localDate.getMonth() + 1).toString().padStart(2, "0");
       return `${day}/${month}`;
+    }
 
-    case "dayMonthYear": // Add new case for "dayMonthYear"
+    case "dayMonthYear": {
       const fullDay = localDate.getDate().toString().padStart(2, "0");
       const fullMonth = (localDate.getMonth() + 1).toString().padStart(2, "0");
       const year = localDate.getFullYear();
       return `${fullDay}/${fullMonth}/${year}`;
+    }
 
     case "default":
-    default:
+    default: {
       const defaultDay = localDate.getDate().toString().padStart(2, "0");
       const defaultMonth = (localDate.getMonth() + 1)
         .toString()
         .padStart(2, "0");
       const defaultYear = localDate.getFullYear();
       return `${defaultDay}/${defaultMonth}/${defaultYear}`;
+    }
   }
 };
 

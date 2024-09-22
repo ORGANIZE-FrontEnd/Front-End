@@ -204,8 +204,8 @@ const ModalForm: React.FC<ModalFormProps> = ({ type, onClose }) => {
             onChange={(e) => setCategory(e.target.value)}
           >
             <option value="">Selecione uma categoria</option>
-            {categories.map((cat, index) => (
-              <option key={index} value={cat}>
+            {categories.map((cat) => (
+              <option key={cat} value={cat}>
                 {cat}
               </option>
             ))}
@@ -238,8 +238,8 @@ const ModalForm: React.FC<ModalFormProps> = ({ type, onClose }) => {
                   onChange={(e) => setFixedExpenseType(e.target.value)}
                 >
                   <option value="">Selecione a parcela</option>
-                  {paymentTypes.map((type, index) => (
-                    <option key={index} value={type}>
+                  {paymentTypes.map((type) => (
+                    <option key={type} value={type}>
                       {type}
                     </option>
                   ))}

@@ -27,11 +27,7 @@ const Button: React.FC<ButtonProps> = ({
   };
 
   return (
-    <button
-      type={type}
-      onClick={handleClick}
-      className={`${className ? `${className}` : ""}`}
-    >
+    <button type={type} onClick={handleClick} className={className}>
       {title}
     </button>
   );
