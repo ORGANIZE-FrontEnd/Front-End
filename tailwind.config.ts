@@ -1,20 +1,23 @@
+/* eslint-disable prettier/prettier */
+import flowbite from "flowbite-react/tailwind";
 import type { Config } from "tailwindcss";
 
 const config: Config = {
-  content: [
-    "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
+  content: ["./src/**/*.{js,ts,jsx,tsx,mdx}", flowbite.content()],
   theme: {
     extend: {
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+      colors: {
+        green: "#1ABE4E",
+        bgWhite: "#f2f4ef",
+        green800: "#117641",
+        green300: "#86efac",
+        green500: "#129E3F",
+        grey: "#787878",
+        offWhite: "#FEFDF9",
       },
     },
   },
-  plugins: [],
+
+  plugins: [flowbite.plugin()],
 };
 export default config;
