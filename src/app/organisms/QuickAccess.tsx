@@ -7,12 +7,15 @@ import {
   currentMonthExpenseAtom,
 } from "@/app/atoms/transactionsAtom"; // Import the current month atoms
 import { useState } from "react";
+import { useRouter } from "next/router";
+import Button from "../atoms/Button";
 
 export default function QuickAccess() {
   const [isModalExpensesOpen, setIsModalExpensesOpen] = useState(false);
   const [isModalReceiptsOpen, setIsModalReceiptsOpen] = useState(false);
   const [isLimitExpensesOpen, setIsLimitExpensesOpen] = useState(false);
   const [isInvestmentsOpen, setIsInvestmentsOpen] = useState(false);
+  const router = useRouter();
 
   // Use the derived current month atoms
   const [currentMonthIncome] = useAtom(currentMonthIncomeAtom);
@@ -74,13 +77,14 @@ export default function QuickAccess() {
               R$ {currentMonthExpense.toFixed(2)}
             </p>
           </div>
-          <a
-            href="#"
+          <Button
             className="flex flex-row rounded-lg border border-white bg-[#fefdf9] shadow-lg flex-grow ml-4 items-center justify-center h-16 font-semibold"
+            type={"button"}
+            buttonLink="/relatorios"
           >
             <img src="/increase.svg" className="w-10 mr-1" />
             ver relatórios
-          </a>
+          </Button>
         </div>
       </div>
       <div className="border-l border-[#ebebeb] pl-7 bg-transparent">
