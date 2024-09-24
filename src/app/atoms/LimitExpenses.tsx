@@ -6,7 +6,7 @@ type LimitExpenseProps = {
   onClose: () => void;
 };
 
-export default function LimitExpenses(props: LimitExpenseProps) {
+export default function LimitExpenses(props: Readonly<LimitExpenseProps>) {
   const [description, setDescription] = useState("");
   const [value, setValue] = useState("");
   const [category, setCategory] = useState("Select category");
@@ -105,8 +105,8 @@ export default function LimitExpenses(props: LimitExpenseProps) {
                       onChange={(e) => setCategory(e.target.value)}
                     >
                       <option value="">Selecione uma categoria</option>
-                      {expenseCategories.map((cat, index) => (
-                        <option key={index} value={cat}>
+                      {expenseCategories.map((cat) => (
+                        <option key={cat} value={cat}>
                           {cat}
                         </option>
                       ))}

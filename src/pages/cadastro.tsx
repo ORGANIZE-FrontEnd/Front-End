@@ -10,11 +10,29 @@ import Alert from "@/app/atoms/Alert";
 
 // Validation functions
 const validators = {
-  email: (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
-  cpf: (cpf: string) => /^[0-9]{11}$/.test(cpf),
-  phone: (phone: string) => /^\(?\d{2}\)?[\s-]?[\s9]?\d{4}-?\d{4}$/.test(phone),
-  password: (password: string) => password.trim() !== "",
-  birthDate: (date: string) => date.trim() !== "",
+  email: (email: string) => {
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    return emailRegex.test(email);
+  },
+
+  cpf: (cpf: string) => {
+    const cpfRegex = /^\d{11}$/;
+    return cpfRegex.test(cpf);
+  },
+
+  phone: (phone: string) => {
+    const phoneRegex = /^\(?\d{2}\)?[\s-]?[\s9]?\d{4}-?\d{4}$/;
+    return phoneRegex.test(phone);
+  },
+
+  password: (password: string) => {
+    return password.trim() !== "" && password.length >= 6;
+  },
+
+  birthDate: (date: string) => {
+    const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+    return date.trim() !== "" && dateRegex.test(date);
+  },
 };
 
 // Validation messages

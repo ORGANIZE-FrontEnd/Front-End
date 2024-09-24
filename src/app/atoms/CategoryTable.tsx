@@ -102,8 +102,11 @@ const CategoryTable: React.FC = () => {
               <td colSpan={3} className="p-2">
                 <table className="w-full border-collapse">
                   <tbody>
-                    {items.map((item, index) => (
-                      <tr key={index} className="border-b border-gray-100">
+                    {items.map((item) => (
+                      <tr
+                        key={`${item.description}-${item.date}-${item.price}`}
+                        className="border-b border-gray-100"
+                      >
                         <td className="text-green p-2 font-medium">
                           {item.description}
                         </td>

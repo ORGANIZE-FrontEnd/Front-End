@@ -1,5 +1,4 @@
-import { useAtom } from "jotai";
-import { atom } from "jotai";
+import { atom, useAtom } from "jotai";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
 import { formatDate } from "./formatDate";
 

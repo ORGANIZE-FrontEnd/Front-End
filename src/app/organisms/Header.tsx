@@ -30,7 +30,6 @@ export default function Header() {
     const navContainer = navRef.current;
 
     if (activeLink && navContainer) {
-      const navContainerRect = navContainer.getBoundingClientRect();
       const activeLinkRect = activeLink.getBoundingClientRect();
 
       setIndicatorPosition(activeLinkRect.left);
@@ -115,41 +114,43 @@ export default function Header() {
         </div>
 
         <div className="flex gap-4 relative">
-          <div
-            ref={bellRef}
-            className="relative"
-            onMouseEnter={handleMouseEnterBell}
-            onMouseLeave={handleMouseLeaveBell}
-          >
-            <button>
+          <div ref={bellRef} className="relative">
+            <button
+              onMouseEnter={handleMouseEnterBell}
+              onMouseLeave={handleMouseLeaveBell}
+              aria-haspopup="true"
+              aria-expanded={showBellMenu}
+            >
               <img src="/iconBelll.svg" alt="Bell Icon" className="h-7" />
             </button>
             {showBellMenu && (
-              <div className="absolute right-0 top-full mt-0 w-48 h-48 bg-white border border-gray-300 rounded-lg shadow-md "></div>
+              <div className="absolute right-0 top-full mt-0 w-48 h-48 bg-white border border-gray-300 rounded-lg shadow-md">
+                notifications
+              </div>
             )}
           </div>
 
-          <div
-            ref={profileRef}
-            className="relative"
-            onMouseEnter={handleMouseEnterProfile}
-            onMouseLeave={handleMouseLeaveProfile}
-          >
-            <button>
+          <div ref={profileRef} className="relative">
+            <button
+              onMouseEnter={handleMouseEnterProfile}
+              onMouseLeave={handleMouseLeaveProfile}
+              aria-haspopup="true"
+              aria-expanded={showProfileMenu}
+            >
               <img src="/iconProfilee.svg" alt="Profile Icon" className="h-7" />
             </button>
             {showProfileMenu && (
               <div className="absolute right-0 top-full mt-0 w-48 bg-white border border-gray-300 rounded-lg shadow-md p-4">
                 <Button
-                  className="w-full text-black hover:text-green font-medium rounded-lg text-base  py-2.5"
-                  title={"Sair"}
+                  className="w-full text-black hover:text-green font-medium rounded-lg text-base py-2.5"
+                  title="Sair"
                   onClick={() =>
                     setUser({
                       ...user,
                       isAuthenticated: false,
                     })
                   }
-                  type={undefined}
+                  type="button"
                 />
               </div>
             )}
