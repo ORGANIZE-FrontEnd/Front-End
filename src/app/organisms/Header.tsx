@@ -48,9 +48,13 @@ export default function Header() {
   return (
     <nav className="bg-green border-gray-200 dark:bg-gray-900 relative">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-1">
-        <span className="text-white self-center text-[35px] font-light whitespace-nowrap">
-          ORGANI$A
-        </span>
+        <Button
+          className="text-white self-center text-[35px] font-light whitespace-nowrap"
+          type={"button"}
+          buttonLink="/home"
+        >
+          <span>ORGANI$A</span>
+        </Button>
 
         <button
           type="button"
