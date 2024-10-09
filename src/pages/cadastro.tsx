@@ -1,23 +1,22 @@
-import { useAtom } from "jotai";
-import { useRouter } from "next/router";
-import { userAtom } from "@/app/atoms/authAtom";
+import Alert from "@/app/atoms/Alert";
 import Button from "@/app/atoms/Button";
 import InputField from "@/app/atoms/InputField";
-import SidebarContent from "@/app/molecules/SideBarContent";
-import { useState } from "react";
 import useLogUser from "@/app/atoms/useLogUser";
-import Alert from "@/app/atoms/Alert";
+import SidebarContent from "@/app/molecules/SideBarContent";
+import axios, { AxiosError } from "axios";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 // Validation functions
 const validators = {
+  name: (name: string) => {
+    const nameRegex = /^[a-zA-ZÀ-ÿ\s]+$/;
+    return nameRegex.test(name);
+  },
+
   email: (email: string) => {
     const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return emailRegex.test(email);
-  },
-
-  cpf: (cpf: string) => {
-    const cpfRegex = /^\d{11}$/;
-    return cpfRegex.test(cpf);
   },
 
   phone: (phone: string) => {
@@ -37,8 +36,8 @@ const validators = {
 
 // Validation messages
 const validationMessages = {
+  name: "Por favor, insira um nome válido.",
   email: "Por favor, insira um e-mail válido.",
-  cpf: "Por favor, insira um CPF válido com 11 dígitos.",
   phone:
     "Por favor, insira um número de telefone válido no formato brasileiro.",
   password: "Por favor, insira uma senha.",
@@ -47,9 +46,9 @@ const validationMessages = {
 
 const MainContent = () => {
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: "",
-    cpf: "",
     phone: "",
     birthDate: "",
   });
@@ -57,7 +56,6 @@ const MainContent = () => {
   const [alertType, setAlertType] = useState<"error" | "success" | "info">(
     "info"
   );
-  const [, setUser] = useAtom(userAtom);
   const router = useRouter();
   useLogUser();
 
@@ -75,7 +73,7 @@ const MainContent = () => {
     return null;
   };
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     const validationError = handleValidation();
     if (validationError) {
       setAlertMessage(validationError);
@@ -83,13 +81,34 @@ const MainContent = () => {
       return;
     }
 
-    setUser({ ...formData, isAuthenticated: false });
-    setAlertMessage("Usuário criado com sucesso!");
-    setAlertType("success");
+    try {
+      const response = await axios.post(
+        "http://localhost:8080/api/users/create",
+        {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          birthday: formData.birthDate,
+          password: formData.password,
+        }
+      );
 
-    setTimeout(() => {
-      router.push("/login");
-    }, 2000);
+      if (response.status === 201) {
+        setAlertMessage("Usuário criado com sucesso!");
+        setAlertType("success");
+
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
+      }
+    } catch (error: unknown) {
+      if (error instanceof AxiosError) {
+        const errorMessage =
+          error.response?.data?.message || "Erro ao criar o usuário.";
+        setAlertMessage(errorMessage);
+      }
+      setAlertType("error");
+    }
   };
 
   const handleCloseAlert = () => {
@@ -110,6 +129,13 @@ const MainContent = () => {
           <p>Bem-vindo!</p>
         </div>
         <InputField
+          type="text"
+          id="name"
+          placeholder="Nome"
+          value={formData.name}
+          onChange={handleChange}
+        />
+        <InputField
           type="email"
           id="email"
           placeholder="Email"
@@ -121,13 +147,6 @@ const MainContent = () => {
           id="password"
           placeholder="Senha"
           value={formData.password}
-          onChange={handleChange}
-        />
-        <InputField
-          type="text"
-          id="cpf"
-          placeholder="CPF"
-          value={formData.cpf}
           onChange={handleChange}
         />
         <InputField
@@ -148,6 +167,7 @@ const MainContent = () => {
           title="Cadastre-se"
           onClick={handleSignUp}
           className="w-1/2 focus:outline-none text-white bg-green hover:bg-green800 focus:ring-4 focus:ring-green300 font-medium rounded-lg text-base px-5 py-2.5 me-2 mb-2"
+          type={"button"}
         />
       </div>
     </>
