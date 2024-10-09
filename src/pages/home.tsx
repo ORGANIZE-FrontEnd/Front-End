@@ -4,8 +4,6 @@ import QuickAccess from "@/app/organisms/QuickAccess";
 import Header from "@/app/organisms/Header";
 
 export default function Home() {
-  useLogUser();
-  useRequireAuth();
   return (
     <>
       <Header />
