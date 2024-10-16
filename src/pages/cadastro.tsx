@@ -1,7 +1,7 @@
 import Alert from "@/app/atoms/Alert";
 import Button from "@/app/atoms/Button";
 import InputField from "@/app/atoms/InputField";
-import useLogUser from "@/app/atoms/useLogUser";
+import useLogUser from "@/app/atoms/logUser";
 import SidebarContent from "@/app/molecules/SideBarContent";
 import axios, { AxiosError } from "axios";
 import { useRouter } from "next/router";

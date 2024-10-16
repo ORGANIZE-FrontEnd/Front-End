@@ -1,4 +1,4 @@
-import useLogUser from "@/app/atoms/useLogUser";
+import useLogUser from "@/app/atoms/logUser";
 import useRequireAuth from "@/app/atoms/useRequireAuth";
 import SpendingLimitDisplay from "@/app/molecules/SpendingLimitDisplay";
 import Header from "@/app/organisms/Header";

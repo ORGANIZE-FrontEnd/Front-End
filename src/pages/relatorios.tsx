@@ -1,19 +1,25 @@
-import useLogUser from "@/app/atoms/useLogUser";
-import useRequireAuth from "@/app/atoms/useRequireAuth";
-import Header from "@/app/organisms/Header";
-import SpendingLimitDisplay from "@/app/molecules/SpendingLimitDisplay";
-import { useState } from "react";
+import BarChart from "@/app/atoms/BarChart";
+import CategoryTable from "@/app/atoms/CategoryTable";
 import Container from "@/app/atoms/Container";
 import DonutChart from "@/app/atoms/DonutChart";
-import CategoryTable from "@/app/atoms/CategoryTable";
-import BarChart from "@/app/atoms/BarChart";
-import SummaryTable from "@/app/atoms/SummaryTable";
-import { useAtom } from "jotai";
 import { filterAtom } from "@/app/atoms/filterAtom";
+import logUser from "@/app/atoms/logUser";
+import SummaryTable from "@/app/atoms/SummaryTable";
+import useRequireAuth from "@/app/atoms/useRequireAuth";
+import SpendingLimitDisplay from "@/app/molecules/SpendingLimitDisplay";
+import Header from "@/app/organisms/Header";
+import { useAtom } from "jotai";
+import { useEffect, useState } from "react";
 
 export default function Relatorios() {
-  useLogUser();
   useRequireAuth();
+  useEffect(() => {
+    const fetchUserData = async () => {
+      await logUser(); // Call this to fetch user data
+    };
+
+    fetchUserData();
+  }, []); // Run once on component mount
 
   const [activeTab, setActiveTab] = useState<"movimentacoes" | "categorias">(
     "categorias"

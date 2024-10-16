@@ -1,34 +1,25 @@
-import { useAtom } from "jotai";
-import { userAtom } from "@/app/atoms/authAtom";
-import { useRouter } from "next/router";
+import Alert from "@/app/atoms/Alert";
 import Button from "@/app/atoms/Button";
 import InputField from "@/app/atoms/InputField";
 import SidebarContent from "@/app/molecules/SideBarContent";
-import React, { useEffect, useState } from "react";
-import useLogUser from "@/app/atoms/useLogUser";
-import Alert from "@/app/atoms/Alert";
+import { LoginResponse } from "@/app/types/Types";
 import axios, { AxiosError } from "axios";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 const MainContent = () => {
   const [inputEmail, setInputEmail] = useState("");
   const [inputPassword, setInputPassword] = useState("");
-  const [user, setUser] = useAtom(userAtom);
   const [alertMessage, setAlertMessage] = useState<string | null>(null);
   const [alertType, setAlertType] = useState<"error" | "success" | "info">(
     "info"
   );
   const router = useRouter();
-  useLogUser();
 
   const handleCloseAlert = () => {
     setAlertMessage(null);
   };
-
-  useEffect(() => {
-    if (user.isAuthenticated) {
-      router.push("/home");
-    }
-  }, [user, router]);
 
   const handleLogin = async () => {
     if (!inputEmail || !inputPassword) {
@@ -38,7 +29,7 @@ const MainContent = () => {
     }
 
     try {
-      const response = await axios.post(
+      const response = await axios.post<LoginResponse>(
         "http://localhost:8080/api/users/login",
         {
           email: inputEmail,
@@ -51,8 +42,19 @@ const MainContent = () => {
           "Login realizado com sucesso! Redirecionando pra home.. "
         );
         setAlertType("success");
-        const { token } = response.data;
-        document.cookie = `X-ORGANIZA-JWT=${token}; path=/; max-age=3600`;
+        console.log(response.data);
+        const { accessToken } = response.data;
+        const { refreshToken } = response.data;
+        Cookies.set("accessToken", accessToken.jwt, {
+          expires: accessToken.expiresIn,
+          secure: true,
+          sameSite: "strict",
+        });
+        Cookies.set("refreshToken", refreshToken.jwt, {
+          expires: refreshToken.expiresIn,
+          secure: true,
+          sameSite: "strict",
+        });
 
         setTimeout(() => {
           router.push("/home");
@@ -61,7 +63,7 @@ const MainContent = () => {
     } catch (error: unknown) {
       if (error instanceof AxiosError) {
         const errorMessage =
-          error.response?.data?.message || "Erro ao criar o usuário.";
+          error.response?.data?.message || "Erro ao logar o usuário.";
         setAlertMessage(errorMessage);
       }
     }
