@@ -1,37 +1,17 @@
-import axios, { AxiosError } from "axios";
-import router from "next/router";
-import Cookies from "js-cookie"; // Import Cookies to access cookies
-import { getUserByIdReponse } from "../types/Types";
-import { getUserIdFromJwt } from "./useDecodeJwt";
+import { AxiosError } from "axios";
+import { getUserById } from "../services/user/userService";
 
 const logUser = async () => {
-  const userId = getUserIdFromJwt();
-  const accessToken = Cookies.get("accessToken");
-
-  // Check if the access token exists
-  if (!accessToken) {
-    return router.push("/login"); // Redirect if no token
-  }
-
   try {
-    const response = await axios.get<getUserByIdReponse>(
-      `http://localhost:8080/api/users/${userId}`,
-      {
-        headers: {
-          "X-ORGANIZA-JWT": accessToken,
-        },
-      }
-    );
+    const response = await getUserById();
 
-    if (response.status === 200) {
-      console.log("User data fetched successfully:", response.data);
+    if (response) {
+      console.log("User data fetched successfully:", response);
     }
-  } catch (error: unknown) {
-    if (error instanceof AxiosError) {
-      const errorMessage =
-        error.response?.data?.message ||
-        "Erro no servico obter dados do usuario";
-    }
+  } catch (error: any) {
+    const errorMessage =
+      error.response?.data || "Erro no serviço ao obter dados do usuário";
+    console.error(errorMessage);
   }
 };
 

@@ -9,17 +9,11 @@ import useRequireAuth from "@/app/atoms/useRequireAuth";
 import SpendingLimitDisplay from "@/app/molecules/SpendingLimitDisplay";
 import Header from "@/app/organisms/Header";
 import { useAtom } from "jotai";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function Relatorios() {
   useRequireAuth();
-  useEffect(() => {
-    const fetchUserData = async () => {
-      await logUser(); // Call this to fetch user data
-    };
-
-    fetchUserData();
-  }, []); // Run once on component mount
+  logUser();
 
   const [activeTab, setActiveTab] = useState<"movimentacoes" | "categorias">(
     "categorias"

@@ -2,8 +2,7 @@ import Alert from "@/app/atoms/Alert";
 import Button from "@/app/atoms/Button";
 import InputField from "@/app/atoms/InputField";
 import SidebarContent from "@/app/molecules/SideBarContent";
-import { LoginResponse } from "@/app/types/Types";
-import axios, { AxiosError } from "axios";
+import { loginService } from "@/app/services/auth/loginService";
 import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { useState } from "react";
@@ -29,22 +28,16 @@ const MainContent = () => {
     }
 
     try {
-      const response = await axios.post<LoginResponse>(
-        "http://localhost:8080/api/users/login",
-        {
-          email: inputEmail,
-          password: inputPassword,
-        }
-      );
+      const response = await loginService(inputEmail, inputPassword);
 
-      if (response.status === 200) {
+      if (response) {
         setAlertMessage(
-          "Login realizado com sucesso! Redirecionando pra home.. "
+          "Login realizado com sucesso! Redirecionando pra home..."
         );
         setAlertType("success");
-        console.log(response.data);
-        const { accessToken } = response.data;
-        const { refreshToken } = response.data;
+
+        const { accessToken, refreshToken } = response;
+        // need to check here a way to encript before storing JWTs
         Cookies.set("accessToken", accessToken.jwt, {
           expires: accessToken.expiresIn,
           secure: true,
@@ -61,10 +54,9 @@ const MainContent = () => {
         }, 2000);
       }
     } catch (error: unknown) {
-      if (error instanceof AxiosError) {
-        const errorMessage =
-          error.response?.data?.message || "Erro ao logar o usuário.";
-        setAlertMessage(errorMessage);
+      if (error instanceof Error) {
+        setAlertMessage(error.message);
+        setAlertType("error");
       }
     }
   };

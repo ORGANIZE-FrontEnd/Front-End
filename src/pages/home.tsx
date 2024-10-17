@@ -2,7 +2,6 @@ import logUser from "@/app/atoms/logUser";
 import useRequireAuth from "@/app/atoms/useRequireAuth";
 import Header from "@/app/organisms/Header";
 import QuickAccess from "@/app/organisms/QuickAccess";
-
 export default function Home() {
   useRequireAuth();
   logUser();

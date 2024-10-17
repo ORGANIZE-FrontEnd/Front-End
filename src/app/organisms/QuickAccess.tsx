@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { useAtom } from "jotai";
 import ModalReceiptExpenses from "../molecules/ModalReceiptExpenses";
 import LimitExpenses from "../atoms/LimitExpenses";

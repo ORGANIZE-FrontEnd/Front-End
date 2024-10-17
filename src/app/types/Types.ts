@@ -33,3 +33,13 @@ export interface DecodedToken {
   iat: number;
   jti: string;
 }
+export interface Transaction {
+  id: string;
+  description: string;
+  price: number;
+  category: string;
+  startDate: string;
+  isRecurring: true;
+  recurrenceType: string;
+  transactionType: "expense" | "income";
+}
