@@ -1,4 +1,3 @@
-import { AxiosError } from "axios";
 import { getUserById } from "../services/user/userService";
 
 const logUser = async () => {

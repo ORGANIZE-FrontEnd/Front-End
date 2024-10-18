@@ -1,4 +1,4 @@
-import { getUserByIdReponse } from "@/app/types/Types";
+import { GetUserByIdReponse } from "@/app/types/Types";
 import Cookies from "js-cookie";
 import api from "..";
 import { getAuthUserId, handleApiRequest } from "../utils/apiUtils";
@@ -6,7 +6,7 @@ import { getAuthUserId, handleApiRequest } from "../utils/apiUtils";
 export const getUserById = async (): Promise<{
   status: "success" | "error";
   message: string;
-  data?: getUserByIdReponse | null;
+  data?: GetUserByIdReponse | null;
 }> => {
   const accessToken = Cookies.get("accessToken");
 
@@ -18,6 +18,6 @@ export const getUserById = async (): Promise<{
   }
 
   const userId = getAuthUserId(); // Use the common utility function
-  const request = api.get<getUserByIdReponse>(`/users/${userId}`);
+  const request = api.get<GetUserByIdReponse>(`/users/${userId}`);
   return handleApiRequest(request, "User retrieved successfully", "Error fetching user");
 };

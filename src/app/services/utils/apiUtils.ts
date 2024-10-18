@@ -1,7 +1,6 @@
 // src/utils/apiUtils.ts
 import { getUserIdFromJwt } from "@/app/atoms/useDecodeJwt";
 import { AxiosError, AxiosResponse } from "axios";
-import api from "..";
 
 export const handleApiRequest = async <T>(
   request: Promise<AxiosResponse<T>>,
@@ -38,5 +37,5 @@ export const handleApiRequest = async <T>(
 
 export const getAuthUserId = (): string => {
     const userId = getUserIdFromJwt();
-    return userId || ""; // Return an empty string if userId is null
+    return userId ?? "";
   };

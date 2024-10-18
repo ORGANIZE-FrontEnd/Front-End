@@ -8,7 +8,7 @@ export interface LoginResponse {
   refreshToken: TokenDTO;
 }
 
-export interface getUserByIdReponse {
+export interface GetUserByIdReponse {
   id: string;
   name: string;
   email: string;

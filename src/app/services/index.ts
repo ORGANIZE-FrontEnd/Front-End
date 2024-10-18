@@ -17,7 +17,7 @@ api.interceptors.request.use(
     return config;
   },
   (error) => {
-    return Promise.reject(error);
+    return Promise.reject(new Error(error));
   }
 );
 
@@ -34,7 +34,7 @@ api.interceptors.response.use(
 
       // if 200 update Cookies
     }
-    return Promise.reject(error);
+    return Promise.reject(new Error(error));
   }
 );
 
