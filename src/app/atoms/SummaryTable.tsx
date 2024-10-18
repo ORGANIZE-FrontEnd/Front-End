@@ -2,7 +2,10 @@ import { useAtom } from "jotai";
 import React, { useEffect, useMemo, useState } from "react";
 import { currentDateAtom } from "./DateSwitcher";
 import { calculateSummary } from "./calculateTransactions";
-import { getExpenses, getIncomes } from "../services/transaction/transactionService";
+import {
+  getExpenses,
+  getIncomes,
+} from "../services/transaction/transactionService";
 import { Transaction } from "../types/Types";
 
 const formatCurrency = (value: number) => `R$ ${value.toFixed(2)}`;
@@ -36,8 +39,8 @@ const SummaryTable: React.FC<SummaryTableProps> = ({ filterType }) => {
   }, []);
 
   console.log(incomes);
-  console.log(expenses)
-  console.log(currentDate)
+  console.log(expenses);
+  console.log(currentDate);
   console.log(filterType);
 
   const filteredTransactions = useMemo(

@@ -54,29 +54,23 @@ export const calculateSummary = (
       );
       const dayLabel = formatDate(dayDate.toISOString(), "dayMonth");
 
-      incomesByPeriod[dayLabel] = incomes.reduce(
-        (sum, item) => {
-          const itemDate = normalizeDate(item.startDate); // Use startDate
-          return itemDate.getDate() === day &&
-            itemDate.getMonth() === selectedDate.getMonth() &&
-            itemDate.getFullYear() === selectedDate.getFullYear()
-            ? sum + item.price
-            : sum;
-        },
-        0
-      );
+      incomesByPeriod[dayLabel] = incomes.reduce((sum, item) => {
+        const itemDate = normalizeDate(item.startDate); // Use startDate
+        return itemDate.getDate() === day &&
+          itemDate.getMonth() === selectedDate.getMonth() &&
+          itemDate.getFullYear() === selectedDate.getFullYear()
+          ? sum + item.price
+          : sum;
+      }, 0);
 
-      expensesByPeriod[dayLabel] = expenses.reduce(
-        (sum, item) => {
-          const itemDate = normalizeDate(item.startDate); // Use startDate
-          return itemDate.getDate() === day &&
-            itemDate.getMonth() === selectedDate.getMonth() &&
-            itemDate.getFullYear() === selectedDate.getFullYear()
-            ? sum + item.price
-            : sum;
-        },
-        0
-      );
+      expensesByPeriod[dayLabel] = expenses.reduce((sum, item) => {
+        const itemDate = normalizeDate(item.startDate); // Use startDate
+        return itemDate.getDate() === day &&
+          itemDate.getMonth() === selectedDate.getMonth() &&
+          itemDate.getFullYear() === selectedDate.getFullYear()
+          ? sum + item.price
+          : sum;
+      }, 0);
 
       resultsByPeriod[dayLabel] =
         incomesByPeriod[dayLabel] - expensesByPeriod[dayLabel];
@@ -87,7 +81,9 @@ export const calculateSummary = (
     const year = selectedDate.getFullYear();
     const firstDayOfMonth = new Date(year, month, 1);
     const firstDayOfWeek = new Date(firstDayOfMonth);
-    firstDayOfWeek.setDate(firstDayOfMonth.getDate() - firstDayOfMonth.getDay());
+    firstDayOfWeek.setDate(
+      firstDayOfMonth.getDate() - firstDayOfMonth.getDay()
+    );
     let currentWeekStart = new Date(firstDayOfWeek);
 
     while (
@@ -98,25 +94,19 @@ export const calculateSummary = (
       weekEnd.setDate(currentWeekStart.getDate() + 6);
       const weekLabel = `${formatDate(currentWeekStart.toISOString(), "dayMonth")} à ${formatDate(weekEnd.toISOString(), "dayMonth")}`;
 
-      incomesByPeriod[weekLabel] = incomes.reduce(
-        (sum, item) => {
-          const itemDate = normalizeDate(item.startDate); // Use startDate
-          return itemDate >= currentWeekStart && itemDate <= weekEnd
-            ? sum + item.price
-            : sum;
-        },
-        0
-      );
+      incomesByPeriod[weekLabel] = incomes.reduce((sum, item) => {
+        const itemDate = normalizeDate(item.startDate); // Use startDate
+        return itemDate >= currentWeekStart && itemDate <= weekEnd
+          ? sum + item.price
+          : sum;
+      }, 0);
 
-      expensesByPeriod[weekLabel] = expenses.reduce(
-        (sum, item) => {
-          const itemDate = normalizeDate(item.startDate); // Use startDate
-          return itemDate >= currentWeekStart && itemDate <= weekEnd
-            ? sum + item.price
-            : sum;
-        },
-        0
-      );
+      expensesByPeriod[weekLabel] = expenses.reduce((sum, item) => {
+        const itemDate = normalizeDate(item.startDate); // Use startDate
+        return itemDate >= currentWeekStart && itemDate <= weekEnd
+          ? sum + item.price
+          : sum;
+      }, 0);
 
       resultsByPeriod[weekLabel] =
         incomesByPeriod[weekLabel] - expensesByPeriod[weekLabel];
@@ -126,27 +116,21 @@ export const calculateSummary = (
     }
   } else if (filterType === "month") {
     const monthLabel = formatDate(selectedDate.toISOString(), "monthYear");
-    incomesByPeriod[monthLabel] = incomes.reduce(
-      (sum, item) => {
-        const itemDate = normalizeDate(item.startDate); // Use startDate
-        return itemDate.getMonth() === selectedDate.getMonth() &&
-          itemDate.getFullYear() === selectedDate.getFullYear()
-          ? sum + item.price
-          : sum;
-      },
-      0
-    );
+    incomesByPeriod[monthLabel] = incomes.reduce((sum, item) => {
+      const itemDate = normalizeDate(item.startDate); // Use startDate
+      return itemDate.getMonth() === selectedDate.getMonth() &&
+        itemDate.getFullYear() === selectedDate.getFullYear()
+        ? sum + item.price
+        : sum;
+    }, 0);
 
-    expensesByPeriod[monthLabel] = expenses.reduce(
-      (sum, item) => {
-        const itemDate = normalizeDate(item.startDate); // Use startDate
-        return itemDate.getMonth() === selectedDate.getMonth() &&
-          itemDate.getFullYear() === selectedDate.getFullYear()
-          ? sum + item.price
-          : sum;
-      },
-      0
-    );
+    expensesByPeriod[monthLabel] = expenses.reduce((sum, item) => {
+      const itemDate = normalizeDate(item.startDate); // Use startDate
+      return itemDate.getMonth() === selectedDate.getMonth() &&
+        itemDate.getFullYear() === selectedDate.getFullYear()
+        ? sum + item.price
+        : sum;
+    }, 0);
 
     resultsByPeriod[monthLabel] =
       incomesByPeriod[monthLabel] - expensesByPeriod[monthLabel];

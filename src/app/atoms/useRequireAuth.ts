@@ -13,8 +13,6 @@ const useRequireAuth = () => {
     if (!checkAuth()) {
       console.log("Not authenticated, redirecting to login...");
       router.push("/login");
-    } else {
-      console.log("Authenticated");
     }
 
     const interval = setInterval(() => {

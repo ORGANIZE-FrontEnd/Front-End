@@ -1,7 +1,40 @@
 import { getUserIdFromJwt } from "@/app/atoms/useDecodeJwt";
 import { Transaction } from "@/app/types/Types";
-import { AxiosError } from "axios";
-import api from "../index"; // Import your configured axios instance
+import { AxiosError, AxiosResponse } from "axios";
+import api from "../index";
+
+const handleApiRequest = async <T>(
+  request: Promise<AxiosResponse<T>>,
+  successMessage: string,
+  errorMessage: string
+): Promise<{ status: "success" | "error"; message: string; data?: T }> => {
+  try {
+    const response = await request;
+
+    if (response.status === 200 || response.status === 201) {
+      return {
+        status: "success",
+        message: successMessage,
+        data: response.data,
+      };
+    }
+
+    return {
+      status: "error",
+      message: "An unexpected error occurred.",
+    };
+  } catch (error: unknown) {
+    let errorMsg = errorMessage;
+    if (error instanceof AxiosError) {
+      errorMsg = error.response?.data?.message || errorMessage;
+    }
+
+    return {
+      status: "error",
+      message: errorMsg,
+    };
+  }
+};
 
 export const createTransaction = async (
   description: string,
@@ -11,108 +44,65 @@ export const createTransaction = async (
   isRecurring: boolean,
   recurrenceType: string,
   transactionType: "expense" | "income"
-): Promise<{ status: "success" | "error"; message: string; data?: Transaction }> => {
+): Promise<{
+  status: "success" | "error";
+  message: string;
+  data?: Transaction;
+}> => {
   const userId = getUserIdFromJwt();
+  const request = api.post<Transaction>(`/transactions/${userId}`, {
+    description,
+    price,
+    category,
+    startDate,
+    isRecurring,
+    recurrenceType,
+    transactionType,
+  });
 
-  try {
-    const response = await api.post<Transaction>(
-      `/transactions/${userId}`,
-      {
-        description,
-        price,
-        category,
-        startDate,
-        isRecurring,
-        recurrenceType,
-        transactionType,
-      }
-    );
-
-    if (response.status === 201) {
-      return {
-        status: "success",
-        message: "Transaction created successfully!",
-        data: response.data
-      };
-    }
-
-    return {
-      status: "error",
-      message: "An unexpected error occurred while creating the transaction."
-    };
-  } catch (error: unknown) {
-    let errorMessage = "Unexpected error occurred.";
-    if (error instanceof AxiosError) {
-      errorMessage = error.response?.data?.message || "Error creating transaction";
-    }
-
-    return {
-      status: "error",
-      message: errorMessage
-    };
-  }
+  return handleApiRequest(
+    request,
+    "Transaction created successfully!",
+    "Error creating transaction"
+  );
 };
 
-export const getIncomes = async (): Promise<{ status: "success" | "error"; message: string; data?: Transaction[] }> => {
+export const getIncomes = async (): Promise<{
+  status: "success" | "error";
+  message: string;
+  data?: Transaction[];
+}> => {
   const userId = getUserIdFromJwt();
-  try {
-    const response = await api.get(
-      `/transactions/incomeList/${userId}`,
-    );
-
-    if (response.status === 200) {
-      return {
-        status: "success",
-        message: "",
-        data: response.data
-      };
-    }
-
-    return {
-      status: "error",
-      message: "An unexpected error occurred while creating the transaction."
-    };
-  } catch (error: unknown) {
-    let errorMessage = "Unexpected error occurred.";
-    if (error instanceof AxiosError) {
-      errorMessage = error.response?.data?.message || "Error obtaining transaction";
-    }
-
-    return {
-      status: "error",
-      message: errorMessage
-    };
-  }
+  const request = api.get<Transaction[]>(`/transactions/incomeList/${userId}`);
+  return handleApiRequest(request, "", "Error obtaining incomes");
 };
 
-export const getExpenses = async (): Promise<{ status: "success" | "error"; message: string; data?: Transaction[] }> => {
+export const getExpenses = async (): Promise<{
+  status: "success" | "error";
+  message: string;
+  data?: Transaction[];
+}> => {
   const userId = getUserIdFromJwt();
-  try {
-    const response = await api.get(
-      `/transactions/expenseList/${userId}`,
-    );
+  const request = api.get<Transaction[]>(`/transactions/expenseList/${userId}`);
+  return handleApiRequest(request, "", "Error obtaining expenses");
+};
 
-    if (response.status === 200) {
-      return {
-        status: "success",
-        message: "",
-        data: response.data
-      };
-    }
+export const getTransactionSummary = async (
+  month: number,
+  year: number
+): Promise<{
+  status: "success" | "error";
+  message: string;
+  data?: { totalExpenses: number; totalIncomes: number };
+}> => {
+  const userId = getUserIdFromJwt();
+  const request = api.get<{ totalExpenses: number; totalIncomes: number }>(
+    `/transactions/transactionSummary/${userId}/${month}/${year}`
+  );
 
-    return {
-      status: "error",
-      message: "An unexpected error occurred while creating the transaction."
-    };
-  } catch (error: unknown) {
-    let errorMessage = "Unexpected error occurred.";
-    if (error instanceof AxiosError) {
-      errorMessage = error.response?.data?.message || "Error obtaining transaction";
-    }
-
-    return {
-      status: "error",
-      message: errorMessage
-    };
-  }
+  return handleApiRequest(
+    request,
+    "Transaction summary retrieved successfully!",
+    "Error obtaining transaction summary"
+  );
 };

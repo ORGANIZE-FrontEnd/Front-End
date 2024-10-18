@@ -12,7 +12,6 @@ export const getUserIdFromJwt = (): string | null => {
 
   try {
     const decodedToken = jwtDecode<DecodedToken>(token);
-    console.log("Decoded Token:", decodedToken); // View the decoded token
     return decodedToken.jti;
   } catch (error) {
     console.error("Failed to decode token", error);

@@ -2,7 +2,10 @@ import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 import { useAtom } from "jotai";
 import React, { useEffect, useMemo, useState } from "react";
 import { Doughnut } from "react-chartjs-2";
-import { getExpenses, getIncomes } from "../services/transaction/transactionService";
+import {
+  getExpenses,
+  getIncomes,
+} from "../services/transaction/transactionService";
 import { currentDateAtom } from "./DateSwitcher";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
@@ -65,11 +68,19 @@ const DonutChart: React.FC = () => {
     };
   }, [incomeData, expenseData, currentDate]);
 
-  const incomeCategories = Object.keys(groupByCategory(filteredTransactions.incomes));
-  const incomeValues = Object.values(groupByCategory(filteredTransactions.incomes));
+  const incomeCategories = Object.keys(
+    groupByCategory(filteredTransactions.incomes)
+  );
+  const incomeValues = Object.values(
+    groupByCategory(filteredTransactions.incomes)
+  );
 
-  const expenseCategories = Object.keys(groupByCategory(filteredTransactions.expenses));
-  const expenseValues = Object.values(groupByCategory(filteredTransactions.expenses));
+  const expenseCategories = Object.keys(
+    groupByCategory(filteredTransactions.expenses)
+  );
+  const expenseValues = Object.values(
+    groupByCategory(filteredTransactions.expenses)
+  );
 
   const incomeChartData = {
     labels: incomeCategories,
