@@ -1,17 +1,31 @@
 import { useEffect } from "react";
 import { useRouter } from "next/router";
-import { useAtom } from "jotai";
-import { userAtom } from "./authAtom";
+import Cookies from "js-cookie";
 
 const useRequireAuth = () => {
   const router = useRouter();
-  const [user] = useAtom(userAtom);
+
+  function checkAuth() {
+    return Cookies.get("accessToken") !== undefined;
+  }
 
   useEffect(() => {
-    if (!user.isAuthenticated) {
+    if (!checkAuth()) {
+      console.log("Not authenticated, redirecting to login...");
       router.push("/login");
     }
-  }, [user, router]);
+
+    const interval = setInterval(() => {
+      if (!checkAuth()) {
+        console.log(
+          "Auth check interval: Not authenticated, redirecting to login..."
+        );
+        router.push("/login");
+      }
+    }, 60000);
+
+    return () => clearInterval(interval);
+  }, [router]);
 };
 
 export default useRequireAuth;

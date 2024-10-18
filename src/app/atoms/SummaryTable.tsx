@@ -1,8 +1,12 @@
-import React, { useMemo } from "react";
 import { useAtom } from "jotai";
-import { transactionsAtom } from "./transactionsAtom";
+import React, { useEffect, useMemo, useState } from "react";
 import { currentDateAtom } from "./DateSwitcher";
 import { calculateSummary } from "./calculateTransactions";
+import {
+  getExpenses,
+  getIncomes,
+} from "../services/transaction/transactionService";
+import { Transaction } from "../types/Types";
 
 const formatCurrency = (value: number) => `R$ ${value.toFixed(2)}`;
 
@@ -13,12 +17,35 @@ export type SummaryTableProps = {
 };
 
 const SummaryTable: React.FC<SummaryTableProps> = ({ filterType }) => {
-  const [transactions] = useAtom(transactionsAtom);
   const [currentDate] = useAtom(currentDateAtom);
+  const [incomes, setIncomes] = useState<Transaction[]>([]);
+  const [expenses, setExpenses] = useState<Transaction[]>([]);
+
+  useEffect(() => {
+    const fetchTransactions = async () => {
+      const incomeResponse = await getIncomes();
+      const expenseResponse = await getExpenses();
+
+      if (incomeResponse.status === "success") {
+        setIncomes(incomeResponse.data || []);
+      }
+
+      if (expenseResponse.status === "success") {
+        setExpenses(expenseResponse.data || []);
+      }
+    };
+
+    fetchTransactions();
+  }, []);
+
+  console.log(incomes);
+  console.log(expenses);
+  console.log(currentDate);
+  console.log(filterType);
 
   const filteredTransactions = useMemo(
-    () => calculateSummary(transactions, currentDate, filterType),
-    [transactions, currentDate, filterType]
+    () => calculateSummary(incomes, expenses, currentDate, filterType),
+    [incomes, expenses, currentDate, filterType]
   );
 
   return (

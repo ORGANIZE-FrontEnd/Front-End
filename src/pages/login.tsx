@@ -1,46 +1,63 @@
-import { useAtom } from "jotai";
-import { userAtom } from "@/app/atoms/authAtom";
-import { useRouter } from "next/router";
+import Alert from "@/app/atoms/Alert";
 import Button from "@/app/atoms/Button";
 import InputField from "@/app/atoms/InputField";
 import SidebarContent from "@/app/molecules/SideBarContent";
-import React, { useEffect, useState } from "react";
-import useLogUser from "@/app/atoms/useLogUser";
-import Alert from "@/app/atoms/Alert";
+import { loginService } from "@/app/services/auth/loginService";
+import Cookies from "js-cookie";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 const MainContent = () => {
   const [inputEmail, setInputEmail] = useState("");
   const [inputPassword, setInputPassword] = useState("");
-  const [user, setUser] = useAtom(userAtom);
-  const [error, setError] = useState<string | null>(null);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [alertType, setAlertType] = useState<"error" | "success" | "info">(
+    "info"
+  );
   const router = useRouter();
-  useLogUser();
 
   const handleCloseAlert = () => {
-    setError(null);
+    setAlertMessage(null);
   };
 
-  useEffect(() => {
-    if (user.isAuthenticated) {
-      router.push("/home");
-    }
-  }, [user, router]);
-
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!inputEmail || !inputPassword) {
-      setError("Email e senha não podem estar vazios.");
+      setAlertType("error");
+      setAlertMessage("Email e senha não podem estar vazios.");
       return;
     }
 
-    if (inputEmail === user.email && inputPassword === user.password) {
-      setError("");
-      setUser({
-        ...user,
-        isAuthenticated: true,
-      });
-      router.push("/home");
-    } else {
-      setError("Credenciais inválidas.");
+    try {
+      const response = await loginService(inputEmail, inputPassword);
+
+      if (response) {
+        setAlertMessage(
+          "Login realizado com sucesso! Redirecionando pra home..."
+        );
+        setAlertType("success");
+
+        const { accessToken, refreshToken } = response;
+        // need to check here a way to encript before storing JWTs
+        Cookies.set("accessToken", accessToken.jwt, {
+          expires: accessToken.expiresIn,
+          secure: true,
+          sameSite: "strict",
+        });
+        Cookies.set("refreshToken", refreshToken.jwt, {
+          expires: refreshToken.expiresIn,
+          secure: true,
+          sameSite: "strict",
+        });
+
+        setTimeout(() => {
+          router.push("/home");
+        }, 2000);
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setAlertMessage(error.message);
+        setAlertType("error");
+      }
     }
   };
 
@@ -70,8 +87,12 @@ const MainContent = () => {
         onClick={handleLogin}
         className="w-2/6 focus:outline-none text-white bg-green hover:bg-green800 focus:ring-4 focus:ring-green300 font-medium rounded-lg text-base px-5 py-2.5 me-2 mb-2"
       />
-      {error && (
-        <Alert message={error} type="error" onClose={handleCloseAlert} />
+      {alertMessage && (
+        <Alert
+          message={alertMessage}
+          type={alertType}
+          onClose={handleCloseAlert}
+        />
       )}
     </div>
   );

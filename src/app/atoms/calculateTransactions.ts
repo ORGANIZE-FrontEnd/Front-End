@@ -2,18 +2,15 @@ import formatDate from "./formatDate";
 import { FilterType } from "./SummaryTable";
 
 export const calculateSummary = (
-  transactions: any,
+  incomes: any[],
+  expenses: any[],
   currentDate: Date,
   filterType: FilterType
 ) => {
   const selectedDate = new Date(currentDate);
   const normalizeDate = (dateString: string) => {
     const date = new Date(dateString);
-    return new Date(
-      date.getUTCFullYear(),
-      date.getUTCMonth(),
-      date.getUTCDate()
-    );
+    return new Date(date.getFullYear(), date.getMonth(), date.getDate());
   };
 
   let incomesByPeriod: { [key: string]: number } = {};
@@ -21,19 +18,18 @@ export const calculateSummary = (
   let resultsByPeriod: { [key: string]: number } = {};
   let balanceByPeriod: { [key: string]: number } = {};
 
-  // Cumulative balance calculation
-  const calculateCumulativeBalance = (transactions: any, upToDate: Date) => {
+  const calculateCumulativeBalance = (upToDate: Date) => {
     let cumulativeBalance = 0;
 
-    transactions.incomes.forEach((item: { date: string; price: number }) => {
-      const itemDate = normalizeDate(item.date);
+    incomes.forEach((item: { startDate: string; price: number }) => {
+      const itemDate = normalizeDate(item.startDate);
       if (itemDate <= upToDate) {
         cumulativeBalance += item.price;
       }
     });
 
-    transactions.expenses.forEach((item: { date: string; price: number }) => {
-      const itemDate = normalizeDate(item.date);
+    expenses.forEach((item: { startDate: string; price: number }) => {
+      const itemDate = normalizeDate(item.startDate);
       if (itemDate <= upToDate) {
         cumulativeBalance -= item.price;
       }
@@ -42,6 +38,7 @@ export const calculateSummary = (
     return cumulativeBalance;
   };
 
+  // Handle different filter types
   if (filterType === "day") {
     const daysInMonth = new Date(
       selectedDate.getFullYear(),
@@ -57,36 +54,27 @@ export const calculateSummary = (
       );
       const dayLabel = formatDate(dayDate.toISOString(), "dayMonth");
 
-      incomesByPeriod[dayLabel] = transactions.incomes.reduce(
-        (sum: number, item: { date: string; price: number }) => {
-          const itemDate = normalizeDate(item.date);
-          return itemDate.getDate() === day &&
-            itemDate.getMonth() === selectedDate.getMonth() &&
-            itemDate.getFullYear() === selectedDate.getFullYear()
-            ? sum + item.price
-            : sum;
-        },
-        0
-      );
+      incomesByPeriod[dayLabel] = incomes.reduce((sum, item) => {
+        const itemDate = normalizeDate(item.startDate); // Use startDate
+        return itemDate.getDate() === day &&
+          itemDate.getMonth() === selectedDate.getMonth() &&
+          itemDate.getFullYear() === selectedDate.getFullYear()
+          ? sum + item.price
+          : sum;
+      }, 0);
 
-      expensesByPeriod[dayLabel] = transactions.expenses.reduce(
-        (sum: number, item: { date: string; price: number }) => {
-          const itemDate = normalizeDate(item.date);
-          return itemDate.getDate() === day &&
-            itemDate.getMonth() === selectedDate.getMonth() &&
-            itemDate.getFullYear() === selectedDate.getFullYear()
-            ? sum + item.price
-            : sum;
-        },
-        0
-      );
+      expensesByPeriod[dayLabel] = expenses.reduce((sum, item) => {
+        const itemDate = normalizeDate(item.startDate); // Use startDate
+        return itemDate.getDate() === day &&
+          itemDate.getMonth() === selectedDate.getMonth() &&
+          itemDate.getFullYear() === selectedDate.getFullYear()
+          ? sum + item.price
+          : sum;
+      }, 0);
 
       resultsByPeriod[dayLabel] =
         incomesByPeriod[dayLabel] - expensesByPeriod[dayLabel];
-      balanceByPeriod[dayLabel] = calculateCumulativeBalance(
-        transactions,
-        dayDate
-      );
+      balanceByPeriod[dayLabel] = calculateCumulativeBalance(dayDate);
     }
   } else if (filterType === "week") {
     const month = selectedDate.getMonth();
@@ -106,65 +94,47 @@ export const calculateSummary = (
       weekEnd.setDate(currentWeekStart.getDate() + 6);
       const weekLabel = `${formatDate(currentWeekStart.toISOString(), "dayMonth")} à ${formatDate(weekEnd.toISOString(), "dayMonth")}`;
 
-      incomesByPeriod[weekLabel] = transactions.incomes.reduce(
-        (sum: number, item: { date: string; price: number }) => {
-          const itemDate = normalizeDate(item.date);
-          return itemDate >= currentWeekStart && itemDate <= weekEnd
-            ? sum + item.price
-            : sum;
-        },
-        0
-      );
+      incomesByPeriod[weekLabel] = incomes.reduce((sum, item) => {
+        const itemDate = normalizeDate(item.startDate); // Use startDate
+        return itemDate >= currentWeekStart && itemDate <= weekEnd
+          ? sum + item.price
+          : sum;
+      }, 0);
 
-      expensesByPeriod[weekLabel] = transactions.expenses.reduce(
-        (sum: number, item: { date: string; price: number }) => {
-          const itemDate = normalizeDate(item.date);
-          return itemDate >= currentWeekStart && itemDate <= weekEnd
-            ? sum + item.price
-            : sum;
-        },
-        0
-      );
+      expensesByPeriod[weekLabel] = expenses.reduce((sum, item) => {
+        const itemDate = normalizeDate(item.startDate); // Use startDate
+        return itemDate >= currentWeekStart && itemDate <= weekEnd
+          ? sum + item.price
+          : sum;
+      }, 0);
 
       resultsByPeriod[weekLabel] =
         incomesByPeriod[weekLabel] - expensesByPeriod[weekLabel];
-      balanceByPeriod[weekLabel] = calculateCumulativeBalance(
-        transactions,
-        weekEnd
-      );
+      balanceByPeriod[weekLabel] = calculateCumulativeBalance(weekEnd);
 
       currentWeekStart.setDate(currentWeekStart.getDate() + 7);
     }
   } else if (filterType === "month") {
     const monthLabel = formatDate(selectedDate.toISOString(), "monthYear");
-    incomesByPeriod[monthLabel] = transactions.incomes.reduce(
-      (sum: number, item: { date: string; price: number }) => {
-        const itemDate = normalizeDate(item.date);
-        return itemDate.getMonth() === selectedDate.getMonth() &&
-          itemDate.getFullYear() === selectedDate.getFullYear()
-          ? sum + item.price
-          : sum;
-      },
-      0
-    );
+    incomesByPeriod[monthLabel] = incomes.reduce((sum, item) => {
+      const itemDate = normalizeDate(item.startDate); // Use startDate
+      return itemDate.getMonth() === selectedDate.getMonth() &&
+        itemDate.getFullYear() === selectedDate.getFullYear()
+        ? sum + item.price
+        : sum;
+    }, 0);
 
-    expensesByPeriod[monthLabel] = transactions.expenses.reduce(
-      (sum: number, item: { date: string; price: number }) => {
-        const itemDate = normalizeDate(item.date);
-        return itemDate.getMonth() === selectedDate.getMonth() &&
-          itemDate.getFullYear() === selectedDate.getFullYear()
-          ? sum + item.price
-          : sum;
-      },
-      0
-    );
+    expensesByPeriod[monthLabel] = expenses.reduce((sum, item) => {
+      const itemDate = normalizeDate(item.startDate); // Use startDate
+      return itemDate.getMonth() === selectedDate.getMonth() &&
+        itemDate.getFullYear() === selectedDate.getFullYear()
+        ? sum + item.price
+        : sum;
+    }, 0);
 
     resultsByPeriod[monthLabel] =
       incomesByPeriod[monthLabel] - expensesByPeriod[monthLabel];
-    balanceByPeriod[monthLabel] = calculateCumulativeBalance(
-      transactions,
-      new Date(selectedDate.getFullYear(), selectedDate.getMonth() + 1, 0)
-    );
+    balanceByPeriod[monthLabel] = calculateCumulativeBalance(selectedDate);
   }
 
   return {

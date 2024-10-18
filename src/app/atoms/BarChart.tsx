@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -9,11 +9,15 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { useAtom } from "jotai";
-import { transactionsAtom } from "./transactionsAtom";
 import { currentDateAtom } from "./DateSwitcher";
-import formatDate from "./formatDate"; // Import the formatDate function
+import formatDate from "./formatDate";
 import { filterAtom } from "./filterAtom";
+import { useAtom } from "jotai";
+import { Transaction } from "../types/Types";
+import {
+  getIncomes,
+  getExpenses,
+} from "../services/transaction/transactionService";
 
 ChartJS.register(
   CategoryScale,
@@ -25,9 +29,35 @@ ChartJS.register(
 );
 
 const BarChart: React.FC = () => {
-  const [transactions] = useAtom(transactionsAtom);
+  const [incomes, setIncomes] = useState<Transaction[]>([]);
+  const [expenses, setExpenses] = useState<Transaction[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentDate] = useAtom(currentDateAtom);
   const [filter, setFilter] = useAtom(filterAtom);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const incomeResponse = await getIncomes();
+        const expenseResponse = await getExpenses();
+
+        if (incomeResponse.status === "success") {
+          setIncomes(incomeResponse.data || []);
+        }
+
+        if (expenseResponse.status === "success") {
+          setExpenses(expenseResponse.data || []);
+        }
+      } catch (error) {
+        console.error("Error fetching transactions", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [currentDate]);
 
   const filteredData = useMemo(() => {
     const startDate = new Date(currentDate);
@@ -62,8 +92,8 @@ const BarChart: React.FC = () => {
         expenseTotals[formatDate(dayDate.toISOString(), "dayMonth")] = 0;
       }
 
-      transactions.incomes.forEach((item) => {
-        const itemDate = normalizeDate(item.date);
+      incomes.forEach((item) => {
+        const itemDate = normalizeDate(item.startDate);
         if (
           itemDate.getMonth() === startDate.getMonth() &&
           itemDate.getFullYear() === startDate.getFullYear()
@@ -73,8 +103,8 @@ const BarChart: React.FC = () => {
         }
       });
 
-      transactions.expenses.forEach((item) => {
-        const itemDate = normalizeDate(item.date);
+      expenses.forEach((item) => {
+        const itemDate = normalizeDate(item.startDate);
         if (
           itemDate.getMonth() === startDate.getMonth() &&
           itemDate.getFullYear() === startDate.getFullYear()
@@ -96,16 +126,16 @@ const BarChart: React.FC = () => {
         expenseTotals[formatDate(weekDate.toISOString(), "dayMonth")] = 0;
       }
 
-      transactions.incomes.forEach((item) => {
-        const itemDate = normalizeDate(item.date);
+      incomes.forEach((item) => {
+        const itemDate = normalizeDate(item.startDate);
         if (itemDate >= startOfWeek && itemDate <= endOfWeek) {
           incomeTotals[formatDate(itemDate.toISOString(), "dayMonth")] +=
             item.price;
         }
       });
 
-      transactions.expenses.forEach((item) => {
-        const itemDate = normalizeDate(item.date);
+      expenses.forEach((item) => {
+        const itemDate = normalizeDate(item.startDate);
         if (itemDate >= startOfWeek && itemDate <= endOfWeek) {
           expenseTotals[formatDate(itemDate.toISOString(), "dayMonth")] +=
             item.price;
@@ -115,16 +145,16 @@ const BarChart: React.FC = () => {
       const month = startDate.getMonth();
       const year = startDate.getFullYear();
 
-      transactions.incomes.forEach((item) => {
-        const itemDate = normalizeDate(item.date);
+      incomes.forEach((item) => {
+        const itemDate = normalizeDate(item.startDate);
         if (itemDate.getMonth() === month && itemDate.getFullYear() === year) {
           incomeTotals[`${month + 1}-${year}`] =
             (incomeTotals[`${month + 1}-${year}`] || 0) + item.price;
         }
       });
 
-      transactions.expenses.forEach((item) => {
-        const itemDate = normalizeDate(item.date);
+      expenses.forEach((item) => {
+        const itemDate = normalizeDate(item.startDate);
         if (itemDate.getMonth() === month && itemDate.getFullYear() === year) {
           expenseTotals[`${month + 1}-${year}`] =
             (expenseTotals[`${month + 1}-${year}`] || 0) + item.price;
@@ -136,7 +166,7 @@ const BarChart: React.FC = () => {
       incomes: incomeTotals,
       expenses: expenseTotals,
     };
-  }, [transactions, currentDate, filter]);
+  }, [incomes, expenses, currentDate, filter]);
 
   const chartLabels = Object.keys(filteredData.incomes);
   const incomeValues = chartLabels.map((label) => filteredData.incomes[label]);
@@ -182,6 +212,12 @@ const BarChart: React.FC = () => {
     },
   };
 
+  if (loading) {
+    return (
+      <p className="text-center text-gray-500 pt-4">Carregando dados...</p>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto">
       <h2 className="py-4 text-base">Entradas x Saídas</h2>
@@ -191,9 +227,7 @@ const BarChart: React.FC = () => {
             <li
               key={type}
               onClick={() => setFilter(type as "day" | "week" | "month")}
-              className={`cursor-pointer py-2 ${
-                filter === type ? "text-green" : "text-gray-500"
-              } hover:text-green`}
+              className={`cursor-pointer py-2 ${filter === type ? "text-green" : "text-gray-500"} hover:text-green`}
             >
               {type === "day"
                 ? "diário"

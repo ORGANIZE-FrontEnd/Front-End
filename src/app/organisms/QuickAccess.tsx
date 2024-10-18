@@ -1,25 +1,47 @@
-import { useAtom } from "jotai";
-import ModalReceiptExpenses from "../molecules/ModalReceiptExpenses";
+import { useEffect, useState } from "react";
+import Button from "../atoms/Button";
 import LimitExpenses from "../atoms/LimitExpenses";
 import ModalIntestments from "../atoms/ModalIntestment";
-import {
-  currentMonthIncomeAtom,
-  currentMonthExpenseAtom,
-} from "@/app/atoms/transactionsAtom"; // Import the current month atoms
-import { useState } from "react";
-import { useRouter } from "next/router";
-import Button from "../atoms/Button";
+import ModalReceiptExpenses from "../molecules/ModalReceiptExpenses";
+import { getTransactionSummary } from "../services/transaction/transactionService";
+import { getUserById } from "../services/user/userService";
 
 export default function QuickAccess() {
   const [isModalExpensesOpen, setIsModalExpensesOpen] = useState(false);
   const [isModalReceiptsOpen, setIsModalReceiptsOpen] = useState(false);
   const [isLimitExpensesOpen, setIsLimitExpensesOpen] = useState(false);
   const [isInvestmentsOpen, setIsInvestmentsOpen] = useState(false);
-  const router = useRouter();
+  const [currentMonthIncome, setCurrentMonthIncome] = useState(0);
+  const [currentMonthExpense, setCurrentMonthExpense] = useState(0);
 
-  // Use the derived current month atoms
-  const [currentMonthIncome] = useAtom(currentMonthIncomeAtom);
-  const [currentMonthExpense] = useAtom(currentMonthExpenseAtom);
+  const [name, setName] = useState<string | null>(null);
+
+  const month = new Date().getMonth() + 1;
+  const year = new Date().getFullYear();
+
+  useEffect(() => {
+    const fetchTransactionSummary = async () => {
+      const response = await getTransactionSummary(month, year);
+      if (response.status === "success" && response.data) {
+        setCurrentMonthIncome(response.data.totalIncomes);
+        setCurrentMonthExpense(response.data.totalExpenses);
+      }
+    };
+
+    fetchTransactionSummary();
+  }, [month, year]);
+
+  const fetchUser = async () => {
+    const result = await getUserById();
+
+    if (result.status === "success" && result.data) {
+      setName(result.data.name);
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, []);
 
   const handleLimitExpensesOpen = () => {
     setIsLimitExpensesOpen(true);
@@ -59,7 +81,7 @@ export default function QuickAccess() {
         <div className="flex flex-col">
           <p>Boa tarde,</p>
           <p className="flex items-center gap-1">
-            <strong>Trummer!</strong>
+            <strong>{name}</strong>
             <img
               src="/sunAndCloud.svg"
               className="w-10"

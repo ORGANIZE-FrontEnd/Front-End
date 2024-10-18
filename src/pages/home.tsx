@@ -1,11 +1,10 @@
-import useLogUser from "@/app/atoms/useLogUser";
+import logUser from "@/app/atoms/logUser";
 import useRequireAuth from "@/app/atoms/useRequireAuth";
-import QuickAccess from "@/app/organisms/QuickAccess";
 import Header from "@/app/organisms/Header";
-
+import QuickAccess from "@/app/organisms/QuickAccess";
 export default function Home() {
-  useLogUser();
   useRequireAuth();
+  logUser();
   return (
     <>
       <Header />
