@@ -15,7 +15,7 @@ export const createTransaction = async (
   message: string;
   data?: Transaction;
 }> => {
-  const userId = getAuthUserId(); // Use the common utility function
+  const userId = await getAuthUserId();
   const request = api.post<Transaction>(`/transactions/${userId}`, {
     description,
     price,
@@ -34,7 +34,7 @@ export const getIncomes = async (): Promise<{
   message: string;
   data?: Transaction[];
 }> => {
-  const userId = getAuthUserId(); // Use the common utility function
+  const userId = await getAuthUserId(); // Use the common utility function
   const request = api.get<Transaction[]>(`/transactions/incomeList/${userId}`);
   return handleApiRequest(request, "", "Error obtaining incomes");
 };
@@ -44,7 +44,7 @@ export const getExpenses = async (): Promise<{
   message: string;
   data?: Transaction[];
 }> => {
-  const userId = getAuthUserId(); // Use the common utility function
+  const userId = await getAuthUserId(); // Use the common utility function
   const request = api.get<Transaction[]>(`/transactions/expenseList/${userId}`);
   return handleApiRequest(request, "", "Error obtaining expenses");
 };
@@ -57,7 +57,7 @@ export const getTransactionSummary = async (
   message: string;
   data?: { totalExpenses: number; totalIncomes: number };
 }> => {
-  const userId = getAuthUserId(); // Use the common utility function
+  const userId = await getAuthUserId(); // Use the common utility function
   const request = api.get<{ totalExpenses: number; totalIncomes: number }>(
     `/transactions/transactionSummary/${userId}/${month}/${year}`
   );

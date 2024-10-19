@@ -8,16 +8,7 @@ export const getUserById = async (): Promise<{
   message: string;
   data?: GetUserByIdReponse | null;
 }> => {
-  const accessToken = Cookies.get("accessToken");
-
-  if (!accessToken) {
-    return {
-      status: "error",
-      message: "User not authenticated",
-    };
-  }
-
-  const userId = getAuthUserId(); // Use the common utility function
+  const userId = await getAuthUserId();
   const request = api.get<GetUserByIdReponse>(`/users/${userId}`);
   return handleApiRequest(request, "User retrieved successfully", "Error fetching user");
 };

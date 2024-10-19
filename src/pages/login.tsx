@@ -2,8 +2,8 @@ import Alert from "@/app/atoms/Alert";
 import Button from "@/app/atoms/Button";
 import InputField from "@/app/atoms/InputField";
 import SidebarContent from "@/app/molecules/SideBarContent";
+import { saveEncryptedToken } from "@/app/services/auth/cookieService";
 import { loginService } from "@/app/services/auth/loginService";
-import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { useState } from "react";
 
@@ -36,18 +36,10 @@ const MainContent = () => {
         );
         setAlertType("success");
 
-        const { accessToken, refreshToken } = response;
-        // need to check here a way to encript before storing JWTs
-        Cookies.set("accessToken", accessToken.jwt, {
-          expires: accessToken.expiresIn,
-          secure: true,
-          sameSite: "strict",
-        });
-        Cookies.set("refreshToken", refreshToken.jwt, {
-          expires: refreshToken.expiresIn,
-          secure: true,
-          sameSite: "strict",
-        });
+        const { accessToken } = response;
+        await saveEncryptedToken(accessToken.jwt);
+        // here I am still creating the logic to store a refresh token 
+        // await saveEncryptedToken(refreshToken.jwt);
 
         setTimeout(() => {
           router.push("/home");

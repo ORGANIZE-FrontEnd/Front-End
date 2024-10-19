@@ -1,19 +1,30 @@
-import axios from "axios";
-import Cookies from "js-cookie";
+import axios, { AxiosResponse } from "axios";
+import { isTokenExpired } from "../atoms/useDecodeJwt";
+import { LoginResponse } from "../types/Types";
+import { saveEncryptedToken } from "./auth/cookieService";
+import { getDecryptedToken } from "./auth/loginService";
 
 export const baseURL = "http://localhost:8080/api";
 
 const api = axios.create({
   baseURL: baseURL,
+  withCredentials: true,
   timeout: 10000,
 });
 
 api.interceptors.request.use(
-  (config) => {
-    const token = Cookies.get("accessToken");
-    if (token) {
-      config.headers["X-ORGANIZA-JWT"] = token;
+  async (config) => {
+    // Decrypt the token asynchronously
+    const isExpired = await isTokenExpired();
+    let decryptedToken = await getDecryptedToken();
+    if (isExpired || !decryptedToken) {
+      console.log("INTERCEPTOR: token expired, getting a new one");
+      await refreshAccessToken();
     }
+    // Set the decrypted token in the request header
+    console.log("DECRIPTED TOKEN, setting header... : ", decryptedToken)
+    config.headers["X-ORGANIZA-JWT"] = decryptedToken;
+
     return config;
   },
   (error) => {
@@ -21,21 +32,17 @@ api.interceptors.request.use(
   }
 );
 
-api.interceptors.response.use(
-  (response) => response, // If response is successful, return it
-  async (error) => {
-    if (error.response?.status === 401) {
-      // Handle token expiration (status 401)
-      Cookies.get("refreshToken");
-      // make getRefreshTokenCall
-      if (error.response?.status === 401) {
-        window.location.href = "/login";
+const refreshAccessToken = async () => {
+  try {
+      const response:AxiosResponse<LoginResponse> = await api.post('/refresh-token');
+      if (response.status === 201) {
+          const newAccessToken = response.data.accessToken.jwt;
+          saveEncryptedToken(newAccessToken);
       }
-
-      // if 200 update Cookies
-    }
-    return Promise.reject(new Error(error));
+  } catch (error) {
+      console.error('Failed to refresh token, invalidating session...', error);  
   }
-);
+};
+
 
 export default api;

@@ -5,7 +5,6 @@ export interface TokenDTO {
 
 export interface LoginResponse {
   accessToken: TokenDTO;
-  refreshToken: TokenDTO;
 }
 
 export interface GetUserByIdReponse {

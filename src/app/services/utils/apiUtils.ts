@@ -35,7 +35,7 @@ export const handleApiRequest = async <T>(
   }
 };
 
-export const getAuthUserId = (): string => {
-    const userId = getUserIdFromJwt();
-    return userId ?? "";
-  };
+export const getAuthUserId = async (): Promise<string> => {
+  const userId = await getUserIdFromJwt();
+  return userId ?? "";
+};
