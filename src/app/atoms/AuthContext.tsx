@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState, useMemo } from "react";
 import { useRouter } from "next/router"; // Import useRouter
 import { getDecryptedToken } from "../services/auth/loginService";
 import { getUserById, refreshAccessToken } from "../services/user/userService";
@@ -59,10 +59,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const value = useMemo(() => ({
+    isAuthenticated,
+    loading,
+    userData,
+    refreshUserData,
+  }), [isAuthenticated, loading, userData]);
+
   return (
-    <AuthContext.Provider
-      value={{ isAuthenticated, loading, userData, refreshUserData }}
-    >
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );

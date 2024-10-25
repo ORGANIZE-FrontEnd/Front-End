@@ -9,7 +9,7 @@ type QuickAccessProps = {
   userName?: string;
 };
 
-export default function QuickAcces(props: QuickAccessProps) {
+export default function QuickAcces(props: Readonly<QuickAccessProps>) {
   const [isModalExpensesOpen, setIsModalExpensesOpen] = useState(false);
   const [isModalReceiptsOpen, setIsModalReceiptsOpen] = useState(false);
   const [isLimitExpensesOpen, setIsLimitExpensesOpen] = useState(false);

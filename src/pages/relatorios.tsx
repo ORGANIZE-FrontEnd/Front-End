@@ -13,6 +13,10 @@ import { useAtom } from "jotai";
 import { useState } from "react";
 
 export default function Relatorios() {
+  const [activeTab, setActiveTab] = useState<"movimentacoes" | "categorias">(
+    "categorias"
+  );
+  const [filter] = useAtom(filterAtom);
   logUser();
   const { loading } = useAuth();
 
@@ -20,10 +24,6 @@ export default function Relatorios() {
     return <LoadingSpinner />;
   }
 
-  const [activeTab, setActiveTab] = useState<"movimentacoes" | "categorias">(
-    "categorias"
-  );
-  const [filter] = useAtom(filterAtom);
 
   console.log("Current filter:", filter);
 
