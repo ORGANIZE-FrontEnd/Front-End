@@ -1,9 +1,8 @@
 import { LoginResponse } from "@/app/types/Types";
 import axios, { AxiosError } from "axios";
-import { baseURL } from "..";
 import Cookies from "js-cookie";
+import { baseURL } from "..";
 import { decryptToken } from "./cookieService";
-
 
 export const loginService = async (
   email: string,
@@ -37,23 +36,19 @@ export const loginService = async (
   }
 };
 
-
-
-
-
 export const getDecryptedToken = async () => {
   const secretKeyBase64 = process.env.NEXT_PUBLIC_SECRET_KEY || "";
-  const encryptedToken = Cookies.get('accessToken');
+  const encryptedToken = Cookies.get("accessToken");
 
   if (!encryptedToken) {
-    console.error('No token found in cookies');
+    console.error("No token found in cookies");
     return null;
   }
 
   try {
     return await decryptToken(encryptedToken, secretKeyBase64);
   } catch (error) {
-    console.error('Error decrypting token:', error);
+    console.error("Error decrypting token:", error);
     return null;
   }
 };

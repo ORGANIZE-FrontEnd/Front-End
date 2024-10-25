@@ -1,19 +1,24 @@
+import { useAuth } from "@/app/atoms/AuthContext";
 import BarChart from "@/app/atoms/BarChart";
 import CategoryTable from "@/app/atoms/CategoryTable";
 import Container from "@/app/atoms/Container";
 import DonutChart from "@/app/atoms/DonutChart";
-import { filterAtom } from "@/app/atoms/filterAtom";
+import { filterAtom } from "@/app/atoms/FilterAtom";
+import LoadingSpinner from "@/app/atoms/LoadingSpinner";
 import logUser from "@/app/atoms/logUser";
 import SummaryTable from "@/app/atoms/SummaryTable";
-import useRequireAuth from "@/app/atoms/useRequireAuth";
 import SpendingLimitDisplay from "@/app/molecules/SpendingLimitDisplay";
 import Header from "@/app/organisms/Header";
 import { useAtom } from "jotai";
 import { useState } from "react";
 
 export default function Relatorios() {
-  useRequireAuth();
   logUser();
+  const { loading } = useAuth();
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   const [activeTab, setActiveTab] = useState<"movimentacoes" | "categorias">(
     "categorias"

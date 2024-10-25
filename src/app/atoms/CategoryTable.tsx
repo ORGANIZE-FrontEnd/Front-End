@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useAtom } from "jotai";
 import { currentDateAtom } from "./DateSwitcher";
-import formatDate from "./formatDate";
+import formatDate from "./FormatDate";
 
 import { Transaction } from "../types/Types";
 import {

@@ -4,8 +4,12 @@ const logUser = async () => {
   try {
     const response = await getUserById();
 
-    if (response) {
+    if (response.status === "success") {
       console.log("User data fetched successfully:", response);
+    }
+
+    if (response.status === "error") {
+      console.log("error getting user data:", response);
     }
   } catch (error: any) {
     const errorMessage =

@@ -42,3 +42,7 @@ export interface Transaction {
   recurrenceType: string;
   transactionType: "expense" | "income";
 }
+
+export interface RefreshTokenResponse {
+  jwt: string;
+}

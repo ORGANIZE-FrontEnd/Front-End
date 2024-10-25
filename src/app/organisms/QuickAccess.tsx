@@ -4,17 +4,18 @@ import LimitExpenses from "../atoms/LimitExpenses";
 import ModalIntestments from "../atoms/ModalIntestment";
 import ModalReceiptExpenses from "../molecules/ModalReceiptExpenses";
 import { getTransactionSummary } from "../services/transaction/transactionService";
-import { getUserById } from "../services/user/userService";
 
-export default function QuickAccess() {
+type QuickAccessProps = {
+  userName?: string;
+};
+
+export default function QuickAcces(props: QuickAccessProps) {
   const [isModalExpensesOpen, setIsModalExpensesOpen] = useState(false);
   const [isModalReceiptsOpen, setIsModalReceiptsOpen] = useState(false);
   const [isLimitExpensesOpen, setIsLimitExpensesOpen] = useState(false);
   const [isInvestmentsOpen, setIsInvestmentsOpen] = useState(false);
   const [currentMonthIncome, setCurrentMonthIncome] = useState(0);
   const [currentMonthExpense, setCurrentMonthExpense] = useState(0);
-
-  const [name, setName] = useState<string | null>(null);
 
   const month = new Date().getMonth() + 1;
   const year = new Date().getFullYear();
@@ -27,21 +28,8 @@ export default function QuickAccess() {
         setCurrentMonthExpense(response.data.totalExpenses);
       }
     };
-
     fetchTransactionSummary();
   }, [month, year]);
-
-  const fetchUser = async () => {
-    const result = await getUserById();
-
-    if (result.status === "success" && result.data) {
-      setName(result.data.name);
-    }
-  };
-
-  useEffect(() => {
-    fetchUser();
-  }, []);
 
   const handleLimitExpensesOpen = () => {
     setIsLimitExpensesOpen(true);
@@ -81,7 +69,7 @@ export default function QuickAccess() {
         <div className="flex flex-col">
           <p>Boa tarde,</p>
           <p className="flex items-center gap-1">
-            <strong>{name}</strong>
+            <strong>{props.userName}</strong>
             <img
               src="/sunAndCloud.svg"
               className="w-10"

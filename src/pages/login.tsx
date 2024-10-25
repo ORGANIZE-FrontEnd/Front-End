@@ -38,7 +38,7 @@ const MainContent = () => {
 
         const { accessToken } = response;
         await saveEncryptedToken(accessToken.jwt);
-        // here I am still creating the logic to store a refresh token 
+        // here I am still creating the logic to store a refresh token
         // await saveEncryptedToken(refreshToken.jwt);
 
         setTimeout(() => {

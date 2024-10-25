@@ -1,6 +1,6 @@
 import { atom, useAtom } from "jotai";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { formatDate } from "./formatDate";
+import { formatDate } from "./FormatDate";
 
 export const currentDateAtom = atom(new Date());
 

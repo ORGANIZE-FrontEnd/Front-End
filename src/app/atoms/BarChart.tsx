@@ -10,14 +10,14 @@ import {
   Legend,
 } from "chart.js";
 import { currentDateAtom } from "./DateSwitcher";
-import formatDate from "./formatDate";
-import { filterAtom } from "./filterAtom";
+import formatDate from "./FormatDate";
 import { useAtom } from "jotai";
 import { Transaction } from "../types/Types";
 import {
   getIncomes,
   getExpenses,
 } from "../services/transaction/transactionService";
+import { filterAtom } from "./FilterAtom";
 
 ChartJS.register(
   CategoryScale,

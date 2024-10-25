@@ -1,4 +1,4 @@
-import Cookies from 'js-cookie';
+import Cookies from "js-cookie";
 
 // Helper function to convert string to ArrayBuffer
 const strToArrayBuffer = (str: string) => new TextEncoder().encode(str);
@@ -6,7 +6,7 @@ const strToArrayBuffer = (str: string) => new TextEncoder().encode(str);
 // Helper function to convert ArrayBuffer to Base64
 const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
   const byteArray = new Uint8Array(buffer);
-  let binaryString = '';
+  let binaryString = "";
   byteArray.forEach((byte) => {
     binaryString += String.fromCharCode(byte);
   });
@@ -16,28 +16,29 @@ const arrayBufferToBase64 = (buffer: ArrayBuffer) => {
 // Encrypt the JWT using Web Crypto API
 export const encryptToken = async (token: string, secretKeyBase64: string) => {
   if (!secretKeyBase64 || !token) {
-    throw new Error('Invalid secret key or token');
+    throw new Error("Invalid secret key or token");
   }
 
   // Decode the Base64-encoded secret key
-  const secretKeyBytes = Uint8Array.from(atob(secretKeyBase64), c => c.charCodeAt(0));
-
+  const secretKeyBytes = Uint8Array.from(atob(secretKeyBase64), (c) =>
+    c.charCodeAt(0)
+  );
 
   // Create a CryptoKey from the secret key bytes
   const key = await crypto.subtle.importKey(
-    'raw',
+    "raw",
     secretKeyBytes.slice(0, 16), // AES key length of 128-bit
-    { name: 'AES-CBC' },
+    { name: "AES-CBC" },
     false,
-    ['encrypt']
+    ["encrypt"]
   );
 
   // Initialization vector (IV) - Same as in Java ('BaeldungIsGreat!')
-  const iv = strToArrayBuffer('BaeldungIsGreat!');
+  const iv = strToArrayBuffer("BaeldungIsGreat!");
 
   // Encrypt the token using AES-CBC
   const encrypted = await crypto.subtle.encrypt(
-    { name: 'AES-CBC', iv },
+    { name: "AES-CBC", iv },
     key,
     strToArrayBuffer(token)
   );
@@ -46,8 +47,6 @@ export const encryptToken = async (token: string, secretKeyBase64: string) => {
   return arrayBufferToBase64(encrypted);
 };
 
-
-
 export const saveEncryptedToken = async (token: string) => {
   const secretKeyBase64 = process.env.NEXT_PUBLIC_SECRET_KEY; // Ensure it's Base64-encoded
 
@@ -55,22 +54,32 @@ export const saveEncryptedToken = async (token: string) => {
     return;
   }
 
-
   try {
     // Encrypt the token
     const encryptedToken = await encryptToken(token, secretKeyBase64);
     // Set the encrypted token in a cookie (same as the Java implementation)
-    Cookies.set('accessToken', encryptedToken, {
+    Cookies.set("accessToken", encryptedToken, {
       secure: true,
-      sameSite: 'strict',
-      expires: 30 / (60 * 60 * 24), // 30 seconds expiry
-      path: '/',
+      sameSite: "strict",
+      expires: 6000,
+      path: "/",
     });
   } catch (error) {
-    console.error('Error encrypting token:', error);
+    console.error("Error encrypting token:", error);
   }
 };
 
+export const eraseCookie = (cookieName: string) => {
+  if (!cookieName) {
+    return;
+  }
+  Cookies.set(cookieName, "", {
+    secure: true,
+    sameSite: "strict",
+    expires: 0,
+    path: "/",
+  });
+};
 
 // Helper function to convert Base64 to ArrayBuffer
 const base64ToArrayBuffer = (base64: string) => {
@@ -83,29 +92,34 @@ const base64ToArrayBuffer = (base64: string) => {
 };
 
 // Decrypt the token using Web Crypto API
-export const decryptToken = async (encryptedToken: string, secretKeyBase64: string) => {
+export const decryptToken = async (
+  encryptedToken: string | undefined,
+  secretKeyBase64: string
+) => {
   if (!secretKeyBase64 || !encryptedToken) {
-    throw new Error('Invalid secret key or encrypted token');
+    throw new Error("Invalid secret key or encrypted token");
   }
 
   // Decode the Base64-encoded secret key
-  const secretKeyBytes = Uint8Array.from(atob(secretKeyBase64), c => c.charCodeAt(0));
+  const secretKeyBytes = Uint8Array.from(atob(secretKeyBase64), (c) =>
+    c.charCodeAt(0)
+  );
 
   // Create a CryptoKey from the secret key bytes
   const key = await crypto.subtle.importKey(
-    'raw',
+    "raw",
     secretKeyBytes.slice(0, 16), // AES key length of 128-bit
-    { name: 'AES-CBC' },
+    { name: "AES-CBC" },
     false,
-    ['decrypt']
+    ["decrypt"]
   );
 
   // Initialization vector (IV) - Same as in Java ('BaeldungIsGreat!')
-  const iv = strToArrayBuffer('BaeldungIsGreat!');
+  const iv = strToArrayBuffer("BaeldungIsGreat!");
 
   // Decrypt the token using AES-CBC
   const decrypted = await crypto.subtle.decrypt(
-    { name: 'AES-CBC', iv },
+    { name: "AES-CBC", iv },
     key,
     base64ToArrayBuffer(encryptedToken)
   );

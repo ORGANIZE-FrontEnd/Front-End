@@ -1,5 +1,5 @@
-import formatDate from "./formatDate";
 import { FilterType } from "./SummaryTable";
+import { formatDate } from "./FormatDate";
 
 export const calculateSummary = (
   incomes: any[],

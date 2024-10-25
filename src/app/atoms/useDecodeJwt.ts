@@ -19,14 +19,9 @@ export const getUserIdFromJwt = async (): Promise<string | null> => {
   }
 };
 
-export const isTokenExpired = async (): Promise<boolean | null> => {
-  const token = await getDecryptedToken();
-
-  if (!token) {
-    console.error("No token found");
-    return null;
-  }
-
+export const isTokenExpired = async (
+  token: string
+): Promise<boolean | null> => {
   try {
     const decodedToken = jwtDecode<DecodedToken>(token);
     const expirationTime = decodedToken.exp * 1000;

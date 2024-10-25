@@ -1,12 +1,12 @@
 import { useAtom } from "jotai";
 import React, { useEffect, useMemo, useState } from "react";
 import { currentDateAtom } from "./DateSwitcher";
-import { calculateSummary } from "./calculateTransactions";
 import {
   getExpenses,
   getIncomes,
 } from "../services/transaction/transactionService";
 import { Transaction } from "../types/Types";
+import { calculateSummary } from "./CalculateTransactions";
 
 const formatCurrency = (value: number) => `R$ ${value.toFixed(2)}`;
 

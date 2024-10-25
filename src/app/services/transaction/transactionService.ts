@@ -26,7 +26,11 @@ export const createTransaction = async (
     transactionType,
   });
 
-  return handleApiRequest(request, "Transaction created successfully!", "Error creating transaction");
+  return handleApiRequest(
+    request,
+    "Transaction created successfully!",
+    "Error creating transaction"
+  );
 };
 
 export const getIncomes = async (): Promise<{
@@ -62,5 +66,9 @@ export const getTransactionSummary = async (
     `/transactions/transactionSummary/${userId}/${month}/${year}`
   );
 
-  return handleApiRequest(request, "Transaction summary retrieved successfully!", "Error obtaining transaction summary");
+  return handleApiRequest(
+    request,
+    "Transaction summary retrieved successfully!",
+    "Error obtaining transaction summary"
+  );
 };
