@@ -1,4 +1,4 @@
-export const FormatDate = (
+export const formatDate = (
   dateString: string,
   formatType:
     | "default"
@@ -61,8 +61,6 @@ export const FormatDate = (
     }
   }
 };
-
-export default FormatDate;
 // Example usages:
 // const dateString = "2024-09-18";
 // formatDate(dateString); // Outputs: 18/09/2024

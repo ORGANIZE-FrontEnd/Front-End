@@ -17,7 +17,7 @@ import {
 import { Transaction } from "../types/Types";
 import { currentDateAtom } from "./DateSwitcher";
 import { filterAtom } from "./FilterAtom";
-import FormatDate from "./FormatDate";
+import { formatDate } from "./FormatDate";
 
 ChartJS.register(
   CategoryScale,
@@ -88,8 +88,8 @@ const BarChart: React.FC = () => {
           startDate.getMonth(),
           day
         );
-        incomeTotals[FormatDate(dayDate.toISOString(), "dayMonth")] = 0;
-        expenseTotals[FormatDate(dayDate.toISOString(), "dayMonth")] = 0;
+        incomeTotals[formatDate(dayDate.toISOString(), "dayMonth")] = 0;
+        expenseTotals[formatDate(dayDate.toISOString(), "dayMonth")] = 0;
       }
 
       incomes.forEach((item) => {
@@ -98,7 +98,7 @@ const BarChart: React.FC = () => {
           itemDate.getMonth() === startDate.getMonth() &&
           itemDate.getFullYear() === startDate.getFullYear()
         ) {
-          incomeTotals[FormatDate(itemDate.toISOString(), "dayMonth")] +=
+          incomeTotals[formatDate(itemDate.toISOString(), "dayMonth")] +=
             item.price;
         }
       });
@@ -109,7 +109,7 @@ const BarChart: React.FC = () => {
           itemDate.getMonth() === startDate.getMonth() &&
           itemDate.getFullYear() === startDate.getFullYear()
         ) {
-          expenseTotals[FormatDate(itemDate.toISOString(), "dayMonth")] +=
+          expenseTotals[formatDate(itemDate.toISOString(), "dayMonth")] +=
             item.price;
         }
       });
@@ -122,14 +122,14 @@ const BarChart: React.FC = () => {
       for (let i = 0; i < 7; i++) {
         const weekDate = new Date(startOfWeek);
         weekDate.setDate(weekDate.getDate() + i);
-        incomeTotals[FormatDate(weekDate.toISOString(), "dayMonth")] = 0;
-        expenseTotals[FormatDate(weekDate.toISOString(), "dayMonth")] = 0;
+        incomeTotals[formatDate(weekDate.toISOString(), "dayMonth")] = 0;
+        expenseTotals[formatDate(weekDate.toISOString(), "dayMonth")] = 0;
       }
 
       incomes.forEach((item) => {
         const itemDate = normalizeDate(item.startDate);
         if (itemDate >= startOfWeek && itemDate <= endOfWeek) {
-          incomeTotals[FormatDate(itemDate.toISOString(), "dayMonth")] +=
+          incomeTotals[formatDate(itemDate.toISOString(), "dayMonth")] +=
             item.price;
         }
       });
@@ -137,7 +137,7 @@ const BarChart: React.FC = () => {
       expenses.forEach((item) => {
         const itemDate = normalizeDate(item.startDate);
         if (itemDate >= startOfWeek && itemDate <= endOfWeek) {
-          expenseTotals[FormatDate(itemDate.toISOString(), "dayMonth")] +=
+          expenseTotals[formatDate(itemDate.toISOString(), "dayMonth")] +=
             item.price;
         }
       });

@@ -1,7 +1,7 @@
 import { useAtom } from "jotai";
 import React, { useEffect, useMemo, useState } from "react";
 import { currentDateAtom } from "./DateSwitcher";
-import { FormatDate } from "./FormatDate";
+import { formatDate } from "./FormatDate";
 
 import {
   getExpenses,
@@ -147,7 +147,7 @@ const CategoryTable: React.FC = () => {
                           {item.description}
                         </td>
                         <td className="text-grey p-2 font-medium">
-                          {FormatDate(item.startDate)}
+                          {formatDate(item.startDate)}
                         </td>
                         <td className="text-end text-grey p-2 font-medium">
                           R$ {formatCurrency(item.price)}

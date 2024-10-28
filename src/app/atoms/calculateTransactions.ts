@@ -1,4 +1,4 @@
-import FormatDate from "./FormatDate";
+import { formatDate } from "./FormatDate";
 import { FilterType } from "./SummaryTable";
 
 export const calculateSummary = (
@@ -52,7 +52,7 @@ export const calculateSummary = (
         selectedDate.getMonth(),
         day
       );
-      const dayLabel = FormatDate(dayDate.toISOString(), "dayMonth");
+      const dayLabel = formatDate(dayDate.toISOString(), "dayMonth");
 
       incomesByPeriod[dayLabel] = incomes.reduce((sum, item) => {
         const itemDate = normalizeDate(item.startDate); // Use startDate
@@ -92,7 +92,7 @@ export const calculateSummary = (
     ) {
       const weekEnd = new Date(currentWeekStart);
       weekEnd.setDate(currentWeekStart.getDate() + 6);
-      const weekLabel = `${FormatDate(currentWeekStart.toISOString(), "dayMonth")} à ${FormatDate(weekEnd.toISOString(), "dayMonth")}`;
+      const weekLabel = `${formatDate(currentWeekStart.toISOString(), "dayMonth")} à ${formatDate(weekEnd.toISOString(), "dayMonth")}`;
 
       incomesByPeriod[weekLabel] = incomes.reduce((sum, item) => {
         const itemDate = normalizeDate(item.startDate); // Use startDate
@@ -115,7 +115,7 @@ export const calculateSummary = (
       currentWeekStart.setDate(currentWeekStart.getDate() + 7);
     }
   } else if (filterType === "month") {
-    const monthLabel = FormatDate(selectedDate.toISOString(), "monthYear");
+    const monthLabel = formatDate(selectedDate.toISOString(), "monthYear");
     incomesByPeriod[monthLabel] = incomes.reduce((sum, item) => {
       const itemDate = normalizeDate(item.startDate); // Use startDate
       return itemDate.getMonth() === selectedDate.getMonth() &&
