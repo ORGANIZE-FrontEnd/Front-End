@@ -97,6 +97,8 @@ export const decryptToken = async (
   secretKeyBase64: string
 ) => {
   if (!secretKeyBase64 || !encryptedToken) {
+    console.log("secretKey:", secretKeyBase64);
+    console.log("token:", encryptedToken);
     throw new Error("Invalid secret key or encrypted token");
   }
 
