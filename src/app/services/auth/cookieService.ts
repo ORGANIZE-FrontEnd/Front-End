@@ -48,7 +48,7 @@ export const encryptToken = async (token: string, secretKeyBase64: string) => {
 };
 
 export const saveEncryptedToken = async (token: string) => {
-  const secretKeyBase64 = process.env.NEXT_PUBLIC_SECRET_KEY; // Ensure it's Base64-encoded
+  const secretKeyBase64 = process.env.SECRET_KEY; // Ensure it's Base64-encoded
 
   if (!secretKeyBase64 || !token) {
     return;
