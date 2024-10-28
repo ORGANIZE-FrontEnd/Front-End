@@ -1,7 +1,7 @@
 import axios, { InternalAxiosRequestConfig } from "axios";
 import { getDecryptedToken } from "./auth/loginService";
 
-export const baseURL = "http://localhost:8080/api";
+export const baseURL = "https://backend-arb4.onrender.com/api";
 
 const api = axios.create({
   baseURL: baseURL,

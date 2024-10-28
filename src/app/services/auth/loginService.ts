@@ -37,7 +37,7 @@ export const loginService = async (
 };
 
 export const getDecryptedToken = async () => {
-  const secretKeyBase64 = process.env.NEXT_PUBLIC_SECRET_KEY || "";
+  const secretKeyBase64 = process.env.SECRET_KEY || "";
   const encryptedToken = Cookies.get("accessToken");
 
   if (!encryptedToken) {
