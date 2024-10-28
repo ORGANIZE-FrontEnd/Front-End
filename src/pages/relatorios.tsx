@@ -29,7 +29,7 @@ export default function Relatorios() {
   return (
     <>
       <Header />
-      <Container className="">
+      <Container>
         <SpendingLimitDisplay title={"Relatórios"} displayType={"relatorios"} />
         <div className="bg-white rounded-b-lg py-1.5 min-h-[600px] shadow-md">
           <div className="flex border-b-2">

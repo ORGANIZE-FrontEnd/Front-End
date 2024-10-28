@@ -11,8 +11,8 @@ import { useAtom } from "jotai";
 import React, { useEffect, useMemo, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
-  getExpenses,
   getIncomes,
+  getExpenses,
 } from "../services/transaction/transactionService";
 import { Transaction } from "../types/Types";
 import { currentDateAtom } from "./DateSwitcher";
