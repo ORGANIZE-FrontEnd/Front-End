@@ -1,23 +1,23 @@
+import {
+  BarElement,
+  CategoryScale,
+  Chart as ChartJS,
+  Legend,
+  LinearScale,
+  Title,
+  Tooltip,
+} from "chart.js";
+import { useAtom } from "jotai";
 import React, { useEffect, useMemo, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
-import { currentDateAtom } from "./DateSwitcher";
-import formatDate from "./FormatDate";
-import { useAtom } from "jotai";
-import { Transaction } from "../types/Types";
-import {
-  getIncomes,
   getExpenses,
+  getIncomes,
 } from "../services/transaction/transactionService";
+import { Transaction } from "../types/Types";
+import { currentDateAtom } from "./DateSwitcher";
 import { filterAtom } from "./FilterAtom";
+import FormatDate from "./FormatDate";
 
 ChartJS.register(
   CategoryScale,
@@ -88,8 +88,8 @@ const BarChart: React.FC = () => {
           startDate.getMonth(),
           day
         );
-        incomeTotals[formatDate(dayDate.toISOString(), "dayMonth")] = 0;
-        expenseTotals[formatDate(dayDate.toISOString(), "dayMonth")] = 0;
+        incomeTotals[FormatDate(dayDate.toISOString(), "dayMonth")] = 0;
+        expenseTotals[FormatDate(dayDate.toISOString(), "dayMonth")] = 0;
       }
 
       incomes.forEach((item) => {
@@ -98,7 +98,7 @@ const BarChart: React.FC = () => {
           itemDate.getMonth() === startDate.getMonth() &&
           itemDate.getFullYear() === startDate.getFullYear()
         ) {
-          incomeTotals[formatDate(itemDate.toISOString(), "dayMonth")] +=
+          incomeTotals[FormatDate(itemDate.toISOString(), "dayMonth")] +=
             item.price;
         }
       });
@@ -109,7 +109,7 @@ const BarChart: React.FC = () => {
           itemDate.getMonth() === startDate.getMonth() &&
           itemDate.getFullYear() === startDate.getFullYear()
         ) {
-          expenseTotals[formatDate(itemDate.toISOString(), "dayMonth")] +=
+          expenseTotals[FormatDate(itemDate.toISOString(), "dayMonth")] +=
             item.price;
         }
       });
@@ -122,14 +122,14 @@ const BarChart: React.FC = () => {
       for (let i = 0; i < 7; i++) {
         const weekDate = new Date(startOfWeek);
         weekDate.setDate(weekDate.getDate() + i);
-        incomeTotals[formatDate(weekDate.toISOString(), "dayMonth")] = 0;
-        expenseTotals[formatDate(weekDate.toISOString(), "dayMonth")] = 0;
+        incomeTotals[FormatDate(weekDate.toISOString(), "dayMonth")] = 0;
+        expenseTotals[FormatDate(weekDate.toISOString(), "dayMonth")] = 0;
       }
 
       incomes.forEach((item) => {
         const itemDate = normalizeDate(item.startDate);
         if (itemDate >= startOfWeek && itemDate <= endOfWeek) {
-          incomeTotals[formatDate(itemDate.toISOString(), "dayMonth")] +=
+          incomeTotals[FormatDate(itemDate.toISOString(), "dayMonth")] +=
             item.price;
         }
       });
@@ -137,7 +137,7 @@ const BarChart: React.FC = () => {
       expenses.forEach((item) => {
         const itemDate = normalizeDate(item.startDate);
         if (itemDate >= startOfWeek && itemDate <= endOfWeek) {
-          expenseTotals[formatDate(itemDate.toISOString(), "dayMonth")] +=
+          expenseTotals[FormatDate(itemDate.toISOString(), "dayMonth")] +=
             item.price;
         }
       });

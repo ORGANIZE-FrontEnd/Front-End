@@ -24,7 +24,6 @@ export default function Relatorios() {
     return <LoadingSpinner />;
   }
 
-
   console.log("Current filter:", filter);
 
   return (

@@ -1,6 +1,6 @@
 import { atom, useAtom } from "jotai";
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { formatDate } from "./FormatDate";
+import FormatDate from "./FormatDate";
 
 export const currentDateAtom = atom(new Date());
 
@@ -23,7 +23,7 @@ export function DateSwitcher() {
     });
   };
 
-  const formattedDate = formatDate(currentDate.toString(), "monthYear");
+  const formattedDate = FormatDate(currentDate.toString(), "monthYear");
 
   return (
     <div className="flex items-center justify-center space-x-4">
