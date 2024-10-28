@@ -16,8 +16,8 @@ import {
 } from "../services/transaction/transactionService";
 import { Transaction } from "../types/Types";
 import { currentDateAtom } from "./DateSwitcher";
-import { filterAtom } from "./FilterAtom";
-import { formatDate } from "./FormatDate";
+import { filterAtom } from "./filterAtom";
+import { formatDate } from "./formatDate";
 
 ChartJS.register(
   CategoryScale,

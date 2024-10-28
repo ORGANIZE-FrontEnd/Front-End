@@ -6,7 +6,7 @@ import {
   getIncomes,
 } from "../services/transaction/transactionService";
 import { Transaction } from "../types/Types";
-import { calculateSummary } from "./CalculateTransactions";
+import { calculateSummary } from "./calculateTransactions";
 
 const formatCurrency = (value: number) => `R$ ${value.toFixed(2)}`;
 

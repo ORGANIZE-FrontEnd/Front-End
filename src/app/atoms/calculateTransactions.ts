@@ -1,4 +1,4 @@
-import { formatDate } from "./FormatDate";
+import { formatDate } from "./formatDate";
 import { FilterType } from "./SummaryTable";
 
 export const calculateSummary = (

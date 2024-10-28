@@ -6,7 +6,7 @@ import {
 } from "../services/transaction/transactionService";
 import { Transaction } from "../types/Types";
 import { currentDateAtom } from "./DateSwitcher";
-import { formatDate } from "./FormatDate";
+import { formatDate } from "./formatDate";
 
 const formatCurrency = (value: number) => `${value.toFixed(2)}`;
 

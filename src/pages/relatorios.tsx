@@ -3,7 +3,7 @@ import BarChart from "@/app/atoms/BarChart";
 import CategoryTable from "@/app/atoms/CategoryTable";
 import Container from "@/app/atoms/Container";
 import DonutChart from "@/app/atoms/DonutChart";
-import { filterAtom } from "@/app/atoms/FilterAtom";
+import { filterAtom } from "@/app/atoms/filterAtom";
 import LoadingSpinner from "@/app/atoms/LoadingSpinner";
 import logUser from "@/app/atoms/logUser";
 import SummaryTable from "@/app/atoms/SummaryTable";
