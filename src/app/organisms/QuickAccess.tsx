@@ -16,17 +16,20 @@ export default function QuickAcces(props: Readonly<QuickAccessProps>) {
   const [isInvestmentsOpen, setIsInvestmentsOpen] = useState(false);
   const [currentMonthIncome, setCurrentMonthIncome] = useState(0);
   const [currentMonthExpense, setCurrentMonthExpense] = useState(0);
+  const [loading, setLoading] = useState(true); // Loading state
 
   const month = new Date().getMonth() + 1;
   const year = new Date().getFullYear();
 
   useEffect(() => {
     const fetchTransactionSummary = async () => {
+      setLoading(true);
       const response = await getTransactionSummary(month, year);
       if (response.status === "success" && response.data) {
         setCurrentMonthIncome(response.data.totalIncomes);
         setCurrentMonthExpense(response.data.totalExpenses);
       }
+      setLoading(false);
     };
     fetchTransactionSummary();
   }, [month, year]);
@@ -80,17 +83,39 @@ export default function QuickAcces(props: Readonly<QuickAccessProps>) {
 
         <div className="grid grid-flow-col gap-4">
           <div className="flex flex-col rounded-lg border border-white bg-[#fefdf9] shadow-lg flex-grow ml-4 items-center justify-center h-16">
-            <p className="text-gray-500 font-semibold">receita mensal</p>
-            <p className="text-lg font-medium text-[#1ABE4E]">
-              R$ {currentMonthIncome.toFixed(2)}
-            </p>
+            {loading ? (
+              // Skeleton loading state for receita mensal
+              <div className="animate-pulse flex flex-col items-center justify-center h-full">
+                <div className="h-4 w-24 bg-gray-200 rounded mb-1"></div>
+                <div className="h-6 w-16 bg-gray-300 rounded"></div>
+              </div>
+            ) : (
+              <>
+                <p className="text-gray-500 font-semibold">receita mensal</p>
+                <p className="text-lg font-medium text-[#1ABE4E]">
+                  R$ {currentMonthIncome.toFixed(2)}
+                </p>
+              </>
+            )}
           </div>
+
           <div className="flex flex-col rounded-lg border border-white bg-[#fefdf9] shadow-lg flex-grow ml-4 items-center justify-center h-16">
-            <p className="text-gray-500 font-semibold">despesa mensal</p>
-            <p className="text-lg font-medium text-red-600">
-              R$ {currentMonthExpense.toFixed(2)}
-            </p>
+            {loading ? (
+              // Skeleton loading state for despesa mensal
+              <div className="animate-pulse flex flex-col items-center justify-center h-full">
+                <div className="h-4 w-24 bg-gray-200 rounded mb-1"></div>
+                <div className="h-6 w-16 bg-gray-300 rounded"></div>
+              </div>
+            ) : (
+              <>
+                <p className="text-gray-500 font-semibold">despesa mensal</p>
+                <p className="text-lg font-medium text-red-600">
+                  R$ {currentMonthExpense.toFixed(2)}
+                </p>
+              </>
+            )}
           </div>
+
           <Button
             className="flex flex-row rounded-lg border border-white bg-[#fefdf9] shadow-lg flex-grow ml-4 items-center justify-center h-16 font-semibold"
             type={"button"}
@@ -105,6 +130,7 @@ export default function QuickAcces(props: Readonly<QuickAccessProps>) {
           </Button>
         </div>
       </div>
+
       <div className="border-l border-[#ebebeb] pl-7 bg-transparent">
         <h2 className="text-lg font-bold">Acesso rápido</h2>
         <ul className="flex items-center mt-6 text-xs font-normal">

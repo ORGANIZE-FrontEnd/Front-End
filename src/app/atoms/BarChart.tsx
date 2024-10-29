@@ -18,6 +18,7 @@ import { Transaction } from "../types/Types";
 import { currentDateAtom } from "./DateSwitcher";
 import { filterAtom } from "./filterAtom";
 import { formatDate } from "./formatDate";
+import LoadingSpinner from "./LoadingSpinner";
 
 ChartJS.register(
   CategoryScale,
@@ -213,9 +214,7 @@ const BarChart: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <p className="text-center text-gray-500 pt-4">Carregando dados...</p>
-    );
+    return <LoadingSpinner />;
   }
 
   return (

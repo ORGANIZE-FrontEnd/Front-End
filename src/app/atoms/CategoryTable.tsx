@@ -7,6 +7,7 @@ import {
 import { Transaction } from "../types/Types";
 import { currentDateAtom } from "./DateSwitcher";
 import { formatDate } from "./formatDate";
+import LoadingSpinner from "./LoadingSpinner";
 
 const formatCurrency = (value: number) => `${value.toFixed(2)}`;
 
@@ -164,7 +165,7 @@ const CategoryTable: React.FC = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <LoadingSpinner />;
   }
 
   if (error) {

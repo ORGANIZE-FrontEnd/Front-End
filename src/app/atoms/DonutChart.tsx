@@ -7,10 +7,10 @@ import {
   getIncomes,
 } from "../services/transaction/transactionService";
 import { currentDateAtom } from "./DateSwitcher";
+import LoadingSpinner from "./LoadingSpinner";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// Helper function to group data by category
 const groupByCategory = (items: any[]) => {
   const grouped: { [key: string]: number } = {};
   items.forEach((item) => {
@@ -27,21 +27,32 @@ const DonutChart: React.FC = () => {
   const [currentDate] = useAtom(currentDateAtom);
   const [incomeData, setIncomeData] = useState<any[]>([]);
   const [expenseData, setExpenseData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const fetchData = async () => {
-      const incomeResponse = await getIncomes();
-      if (incomeResponse.status === "success") {
-        setIncomeData(incomeResponse.data || []);
-      }
+      try {
+        const [incomeResponse, expenseResponse] = await Promise.all([
+          getIncomes(),
+          getExpenses(),
+        ]);
 
-      const expenseResponse = await getExpenses();
-      if (expenseResponse.status === "success") {
-        setExpenseData(expenseResponse.data || []);
+        if (incomeResponse.status === "success") {
+          setIncomeData(incomeResponse.data || []);
+        }
+        if (expenseResponse.status === "success") {
+          setExpenseData(expenseResponse.data || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch income and expense data", error);
+      } finally {
+        setLoading(false);
       }
     };
 
     fetchData();
   }, []);
+
   const filteredTransactions = useMemo(() => {
     const selectedMonth = currentDate.getMonth();
     const selectedYear = currentDate.getFullYear();
@@ -136,14 +147,15 @@ const DonutChart: React.FC = () => {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      {!hasTransactions ? (
+      {loading ? (
+        <div></div>
+      ) : !hasTransactions ? (
         <p className="text-center text-gray-500 pt-24">
           Nenhuma movimentação até o momento. Que tal começar a adicionar seus
           gastos agora?
         </p>
       ) : (
         <div className="flex flex-wrap justify-center gap-10 relative">
-          {/* Donut chart for Expenses */}
           <div className="relative w-1/2 max-w-xs">
             <Doughnut data={expenseChartData} options={options} />
             <div
