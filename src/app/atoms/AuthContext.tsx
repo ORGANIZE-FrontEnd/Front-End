@@ -5,7 +5,7 @@ import React, {
   useState,
   useMemo,
 } from "react";
-import { useRouter } from "next/router"; // Import useRouter
+import { useRouter } from "next/router";
 import { getDecryptedToken } from "../services/auth/loginService";
 import { getUserById, refreshAccessToken } from "../services/user/userService";
 import { isTokenExpired } from "./useDecodeJwt";
@@ -30,15 +30,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
 
   useEffect(() => {
     const checkAuth = async () => {
-      const encryptedToken = await getDecryptedToken();
+      const isExcludedRoute = ["/login", "/cadastro"].includes(router.pathname);
 
-      const isLoginPage = router.pathname === "/login";
-
-      // If the user is on the login page, skip the service calls
-      if (isLoginPage) {
+      if (isExcludedRoute) {
         setLoading(false);
         return;
       }
+
+      const encryptedToken = await getDecryptedToken();
 
       if (!encryptedToken || (await isTokenExpired(encryptedToken))) {
         const newToken = await refreshAccessToken();
@@ -49,6 +48,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
           return;
         }
       }
+      
       setIsAuthenticated(true);
       await refreshUserData();
       setLoading(false);

@@ -1,6 +1,7 @@
 import Alert from "@/app/atoms/Alert";
 import Button from "@/app/atoms/Button";
 import InputField from "@/app/atoms/InputField";
+import LoadingSpinner from "@/app/atoms/LoadingSpinner";
 import SidebarContent from "@/app/molecules/SideBarContent";
 import { saveEncryptedToken } from "@/app/services/auth/cookieService";
 import { loginService } from "@/app/services/auth/loginService";
@@ -14,6 +15,7 @@ const MainContent = () => {
   const [alertType, setAlertType] = useState<"error" | "success" | "info">(
     "info"
   );
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
 
   const handleCloseAlert = () => {
@@ -27,30 +29,42 @@ const MainContent = () => {
       return;
     }
 
-    try {
-      const response = await loginService(inputEmail, inputPassword);
+    let retryCount = 0;
+    const maxRetries = 2;
+    setLoading(true);
 
-      if (response) {
-        setAlertMessage(
-          "Login realizado com sucesso! Redirecionando pra home..."
-        );
-        setAlertType("success");
+    while (retryCount < maxRetries) {
+      try {
+        const response = await loginService(inputEmail, inputPassword);
 
-        const { accessToken } = response;
-        await saveEncryptedToken(accessToken.jwt);
-        // here I am still creating the logic to store a refresh token
-        // await saveEncryptedToken(refreshToken.jwt);
+        if (response) {
+          setAlertMessage(
+            "Login realizado com sucesso! Redirecionando pra home..."
+          );
+          setAlertType("success");
 
-        setTimeout(() => {
-          router.push("/home");
-        }, 2000);
-      }
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setAlertMessage(error.message);
-        setAlertType("error");
+          const { accessToken } = response;
+          await saveEncryptedToken(accessToken.jwt);
+
+          setTimeout(() => {
+            router.push("/home");
+          }, 2000);
+
+          setLoading(false);
+          return;
+        }
+      } catch (error: unknown) {
+        retryCount += 1;
+        if (error instanceof Error) {
+          setAlertMessage(error.message);
+          setAlertType("error");
+        }
       }
     }
+
+    setAlertMessage("Falha no login após várias tentativas. Tente novamente.");
+    setAlertType("error");
+    setLoading(false);
   };
 
   return (
@@ -73,12 +87,19 @@ const MainContent = () => {
         value={inputPassword}
         onChange={(e) => setInputPassword(e.target.value)}
       />
-      <Button
-        type="button"
-        title="Entrar"
-        onClick={handleLogin}
-        className="w-2/6 focus:outline-none text-white bg-green hover:bg-green800 focus:ring-4 focus:ring-green300 font-medium rounded-lg text-base px-5 py-2.5 me-2 mb-2"
-      />
+      <div className="w-2/6 h-12 flex items-center justify-center"> {/* Added container for button/spinner */}
+        {loading ? (
+          <LoadingSpinner />
+        ) : (
+          <Button
+            type="button"
+            title="Entrar"
+            onClick={handleLogin}
+            className="w-full focus:outline-none text-white bg-green hover:bg-green800 focus:ring-4 focus:ring-green300 font-medium rounded-lg text-base px-5 py-2.5"
+            disabled={loading}
+          />
+        )}
+      </div>
       {alertMessage && (
         <Alert
           message={alertMessage}
