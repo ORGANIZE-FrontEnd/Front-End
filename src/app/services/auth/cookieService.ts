@@ -1,3 +1,4 @@
+import axios from "axios";
 import Cookies from "js-cookie";
 
 // Helper function to convert string to ArrayBuffer
@@ -48,22 +49,16 @@ export const encryptToken = async (token: string, secretKeyBase64: string) => {
 };
 
 export const saveEncryptedToken = async (token: string) => {
-  const secretKeyBase64 = process.env.NEXT_PUBLIC_SECRET_KEY; // Ensure it's Base64-encoded
-
-  if (!secretKeyBase64 || !token) {
+  if (!token) {
     return;
   }
 
   try {
-    // Encrypt the token
-    const encryptedToken = await encryptToken(token, secretKeyBase64);
-    // Set the encrypted token in a cookie (same as the Java implementation)
-    Cookies.set("accessToken", encryptedToken, {
-      secure: true,
-      sameSite: "strict",
-      expires: 6000,
-      path: "/",
+    const response = await axios.post("/api/setCookie", {
+      token,
     });
+
+    return response.status;
   } catch (error) {
     console.error("Error encrypting token:", error);
   }
@@ -74,7 +69,7 @@ export const eraseCookie = (cookieName: string) => {
     return;
   }
   Cookies.set(cookieName, "", {
-    secure: true,
+    secure: false,
     sameSite: "strict",
     expires: 0,
     path: "/",
@@ -97,8 +92,6 @@ export const decryptToken = async (
   secretKeyBase64: string
 ) => {
   if (!secretKeyBase64 || !encryptedToken) {
-    console.log("secretKey:", secretKeyBase64);
-    console.log("token:", encryptedToken);
     throw new Error("Invalid secret key or encrypted token");
   }
 

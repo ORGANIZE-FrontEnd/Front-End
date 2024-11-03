@@ -44,8 +44,11 @@ const MainContent = () => {
           setAlertType("success");
 
           const { accessToken } = response;
-          await saveEncryptedToken(accessToken.jwt);
+          const result = await saveEncryptedToken(accessToken.jwt);
 
+          if(result !== 200){
+            return;
+          }
           setTimeout(() => {
             router.push("/home");
           }, 2000);
