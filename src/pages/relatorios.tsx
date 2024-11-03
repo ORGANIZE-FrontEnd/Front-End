@@ -5,7 +5,6 @@ import Container from "@/app/atoms/Container";
 import DonutChart from "@/app/atoms/DonutChart";
 import { filterAtom } from "@/app/atoms/filterAtom";
 import LoadingSpinner from "@/app/atoms/LoadingSpinner";
-import logUser from "@/app/atoms/logUser";
 import SummaryTable from "@/app/atoms/SummaryTable";
 import SpendingLimitDisplay from "@/app/molecules/SpendingLimitDisplay";
 import Header from "@/app/organisms/Header";
@@ -17,7 +16,6 @@ export default function Relatorios() {
     "categorias"
   );
   const [filter] = useAtom(filterAtom);
-  logUser();
   const { loading } = useAuth();
 
   if (loading) {

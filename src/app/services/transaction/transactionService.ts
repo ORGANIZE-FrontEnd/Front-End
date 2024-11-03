@@ -38,7 +38,7 @@ export const getIncomes = async (): Promise<{
   message: string;
   data?: Transaction[];
 }> => {
-  const userId = await getAuthUserId(); // Use the common utility function
+  const userId = await getAuthUserId();
   const request = api.get<Transaction[]>(`/transactions/incomeList/${userId}`);
   return handleApiRequest(request, "", "Error obtaining incomes");
 };

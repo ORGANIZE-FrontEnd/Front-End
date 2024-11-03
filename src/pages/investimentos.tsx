@@ -1,11 +1,9 @@
 import { useAuth } from "@/app/atoms/AuthContext";
 import LoadingSpinner from "@/app/atoms/LoadingSpinner";
-import useLogUser from "@/app/atoms/logUser";
 import SpendingLimitDisplay from "@/app/molecules/SpendingLimitDisplay";
 import Header from "@/app/organisms/Header";
 
 export default function Investimentos() {
-  useLogUser();
   const { loading } = useAuth();
 
   if (loading) {

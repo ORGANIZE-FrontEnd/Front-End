@@ -4,6 +4,7 @@ import React, {
   useEffect,
   useState,
   useMemo,
+  useRef,
 } from "react";
 import { useRouter } from "next/router";
 import { getDecryptedToken } from "../services/auth/loginService";
@@ -27,34 +28,63 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
   const [userData, setUserData] = useState<GetUserByIdReponse | null>(null);
   const router = useRouter();
+  const authCheckedRef = useRef(false);
+  const retryAttemptedRef = useRef(false);
 
   useEffect(() => {
+    let mounted = true;
+
     const checkAuth = async () => {
+      if (authCheckedRef.current) return;
+
       const isExcludedRoute = ["/login", "/cadastro"].includes(router.pathname);
 
       if (isExcludedRoute) {
         setLoading(false);
+        authCheckedRef.current = true;
         return;
       }
 
-      const encryptedToken = await getDecryptedToken();
+      try {
+        const encryptedToken = await getDecryptedToken();
 
-      if (!encryptedToken || (await isTokenExpired(encryptedToken))) {
-        const newToken = await refreshAccessToken();
-        if (!newToken) {
+        if (!encryptedToken || (await isTokenExpired(encryptedToken))) {
+          const newToken = await refreshAccessToken();
+          if (!newToken) {
+            if (mounted) {
+              setIsAuthenticated(false);
+              setLoading(false);
+              authCheckedRef.current = true;
+              router.push("/login");
+            }
+            return;
+          }
+        }
+
+        if (mounted) {
+          setIsAuthenticated(true);
+          await refreshUserData();
+          setLoading(false);
+          authCheckedRef.current = true;
+        }
+      } catch (error) {
+        console.error("Authentication check failed:", error);
+        if (!retryAttemptedRef.current && mounted) {
+          retryAttemptedRef.current = true;
+          await checkAuth();
+        } else if (mounted) {
           setIsAuthenticated(false);
           setLoading(false);
-          router.push("/login");
-          return;
+          authCheckedRef.current = true;
         }
       }
-      
-      setIsAuthenticated(true);
-      await refreshUserData();
-      setLoading(false);
     };
 
     checkAuth();
+
+    return () => {
+      mounted = false;
+    };
   }, [router.pathname]);
 
   const refreshUserData = async () => {

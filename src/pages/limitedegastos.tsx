@@ -1,13 +1,10 @@
 import { useAuth } from "@/app/atoms/AuthContext";
 import Button from "@/app/atoms/Button";
 import LoadingSpinner from "@/app/atoms/LoadingSpinner";
-import useLogUser from "@/app/atoms/logUser";
 import SpendingLimitDisplay from "@/app/molecules/SpendingLimitDisplay";
 import Header from "@/app/organisms/Header";
 
 export default function LimiteDeGastos() {
-  useLogUser();
-
   const { loading } = useAuth();
 
   if (loading) {

@@ -1,11 +1,9 @@
-import { useAuth, AuthProvider } from "@/app/atoms/AuthContext";
+import { AuthProvider, useAuth } from "@/app/atoms/AuthContext";
 import LoadingSpinner from "@/app/atoms/LoadingSpinner";
-import logUser from "@/app/atoms/logUser";
 import Header from "@/app/organisms/Header";
 import QuickAccess from "@/app/organisms/QuickAccess";
 
 const HomeContent = () => {
-  logUser();
   const { loading, userData } = useAuth();
 
   if (loading) {
