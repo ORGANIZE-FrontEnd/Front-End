@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useAtom } from "jotai";
+import { createTransaction } from "../services/transaction/transactionService";
+import Alert from "./Alert";
 import FormFooter from "./FormFooter";
-import { balanceAtom, transactionsAtom } from "@/app/atoms/transactionsAtom";
+import { removeAccents } from "../utils/Utils";
 
 type ModalFormProps = {
   type: "income" | "expense";
@@ -9,6 +10,14 @@ type ModalFormProps = {
 };
 
 const ModalForm: React.FC<ModalFormProps> = ({ type, onClose }) => {
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [alertType, setAlertType] = useState<"error" | "success" | "info">(
+    "info"
+  );
+  const handleCloseAlert = () => {
+    setAlertMessage(null);
+  };
+
   const [today, setToday] = useState("");
   const [description, setDescription] = useState("");
   const [price, setPrice] = useState("");
@@ -20,9 +29,6 @@ const ModalForm: React.FC<ModalFormProps> = ({ type, onClose }) => {
     useState(false);
   const [fixedExpenseType, setFixedExpenseType] = useState("");
   const [installmentCount, setInstallmentCount] = useState("");
-
-  const [balance, setBalance] = useAtom(balanceAtom);
-  const [transactions, setTransactions] = useAtom(transactionsAtom);
   const paymentTypes = [
     "Semanal",
     "Quinzenal",
@@ -72,7 +78,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ type, onClose }) => {
     ));
   };
 
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
 
     const parsedPrice = parseFloat(price);
@@ -90,28 +96,36 @@ const ModalForm: React.FC<ModalFormProps> = ({ type, onClose }) => {
       installmentCount,
     };
 
-    let newBalance = balance;
-    if (type === "expense") {
-      newBalance -= parsedPrice;
-      setTransactions((prev) => ({
-        ...prev,
-        expenses: [...prev.expenses, transactionData],
-      }));
-    } else {
-      newBalance += parsedPrice;
-      setTransactions((prev) => ({
-        ...prev,
-        incomes: [...prev.incomes, transactionData],
-      }));
+    try {
+      const response = await createTransaction(
+        transactionData.description,
+        transactionData.price,
+        removeAccents(transactionData.category),
+        transactionData.date,
+        transactionData.isFixedExpense,
+        transactionData.fixedExpenseType,
+        transactionData.type
+      );
+
+      if (response?.status === "success") {
+        setAlertMessage("Transacao criada com sucesso!");
+        setAlertType("success");
+      } else {
+        setAlertMessage("Erro ao criar transacao!");
+        setAlertType("error");
+      }
+
+      setTimeout(() => {
+        onClose();
+      }, 3000);
+    } catch (error) {
+      setAlertMessage("Ocorreu um erro ao criar a transacao!");
+      setAlertType("error");
+
+      setTimeout(() => {
+        onClose();
+      }, 3000);
     }
-
-    setBalance(newBalance);
-
-    console.log("Transaction Submitted:", transactionData);
-    console.log("Updated Balance:", newBalance);
-    console.log("new array of transactions: ", transactions);
-
-    onClose();
   };
 
   return (
@@ -281,6 +295,13 @@ const ModalForm: React.FC<ModalFormProps> = ({ type, onClose }) => {
         </div>
       </div>
       <FormFooter onClose={onClose} onSubmit={handleSubmit} />
+      {alertMessage && (
+        <Alert
+          message={alertMessage}
+          type={alertType}
+          onClose={handleCloseAlert}
+        />
+      )}
     </form>
   );
 };

@@ -4,36 +4,13 @@ const nextConfig = {
     return [
       {
         source: "/",
-        destination: "/login",
+        destination: "/home",
         permanent: true,
-      },
-      {
-        source: "/login",
-        has: [
-          {
-            type: "cookie",
-            key: "userSession",
-            value: "authenticated", // or any condition indicating the user is logged in
-          },
-        ],
-        destination: "/home",
-        permanent: false,
-      },
-      // Add logic to prevent redirecting when already on the desired page
-      {
-        source: "/cadastro",
-        has: [
-          {
-            type: "cookie",
-            key: "userSession",
-            value: "authenticated",
-          },
-        ],
-        destination: "/home",
-        permanent: false,
       },
     ];
   },
+  reactStrictMode: true,
+  swcMinify: true,
 };
 
 export default nextConfig;

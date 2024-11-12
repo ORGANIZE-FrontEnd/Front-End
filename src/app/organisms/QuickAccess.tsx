@@ -1,25 +1,38 @@
-import { useAtom } from "jotai";
-import ModalReceiptExpenses from "../molecules/ModalReceiptExpenses";
+import { useEffect, useState } from "react";
+import Button from "../atoms/Button";
 import LimitExpenses from "../atoms/LimitExpenses";
 import ModalIntestments from "../atoms/ModalIntestment";
-import {
-  currentMonthIncomeAtom,
-  currentMonthExpenseAtom,
-} from "@/app/atoms/transactionsAtom"; // Import the current month atoms
-import { useState } from "react";
-import { useRouter } from "next/router";
-import Button from "../atoms/Button";
+import ModalReceiptExpenses from "../molecules/ModalReceiptExpenses";
+import { getTransactionSummary } from "../services/transaction/transactionService";
 
-export default function QuickAccess() {
+type QuickAccessProps = {
+  userName?: string;
+};
+
+export default function QuickAcces(props: Readonly<QuickAccessProps>) {
   const [isModalExpensesOpen, setIsModalExpensesOpen] = useState(false);
   const [isModalReceiptsOpen, setIsModalReceiptsOpen] = useState(false);
   const [isLimitExpensesOpen, setIsLimitExpensesOpen] = useState(false);
   const [isInvestmentsOpen, setIsInvestmentsOpen] = useState(false);
-  const router = useRouter();
+  const [currentMonthIncome, setCurrentMonthIncome] = useState(0);
+  const [currentMonthExpense, setCurrentMonthExpense] = useState(0);
+  const [loading, setLoading] = useState(true); // Loading state
 
-  // Use the derived current month atoms
-  const [currentMonthIncome] = useAtom(currentMonthIncomeAtom);
-  const [currentMonthExpense] = useAtom(currentMonthExpenseAtom);
+  const month = new Date().getMonth() + 1;
+  const year = new Date().getFullYear();
+
+  useEffect(() => {
+    const fetchTransactionSummary = async () => {
+      setLoading(true);
+      const response = await getTransactionSummary(month, year);
+      if (response.status === "success" && response.data) {
+        setCurrentMonthIncome(response.data.totalIncomes);
+        setCurrentMonthExpense(response.data.totalExpenses);
+      }
+      setLoading(false);
+    };
+    fetchTransactionSummary();
+  }, [month, year]);
 
   const handleLimitExpensesOpen = () => {
     setIsLimitExpensesOpen(true);
@@ -59,7 +72,7 @@ export default function QuickAccess() {
         <div className="flex flex-col">
           <p>Boa tarde,</p>
           <p className="flex items-center gap-1">
-            <strong>Trummer!</strong>
+            <strong>{props.userName}</strong>
             <img
               src="/sunAndCloud.svg"
               className="w-10"
@@ -70,17 +83,39 @@ export default function QuickAccess() {
 
         <div className="grid grid-flow-col gap-4">
           <div className="flex flex-col rounded-lg border border-white bg-[#fefdf9] shadow-lg flex-grow ml-4 items-center justify-center h-16">
-            <p className="text-gray-500 font-semibold">receita mensal</p>
-            <p className="text-lg font-medium text-[#1ABE4E]">
-              R$ {currentMonthIncome.toFixed(2)}
-            </p>
+            {loading ? (
+              // Skeleton loading state for receita mensal
+              <div className="animate-pulse flex flex-col items-center justify-center h-full">
+                <div className="h-4 w-24 bg-gray-200 rounded mb-1"></div>
+                <div className="h-6 w-16 bg-gray-300 rounded"></div>
+              </div>
+            ) : (
+              <>
+                <p className="text-gray-500 font-semibold">receita mensal</p>
+                <p className="text-lg font-medium text-[#1ABE4E]">
+                  R$ {currentMonthIncome.toFixed(2)}
+                </p>
+              </>
+            )}
           </div>
+
           <div className="flex flex-col rounded-lg border border-white bg-[#fefdf9] shadow-lg flex-grow ml-4 items-center justify-center h-16">
-            <p className="text-gray-500 font-semibold">despesa mensal</p>
-            <p className="text-lg font-medium text-red-600">
-              R$ {currentMonthExpense.toFixed(2)}
-            </p>
+            {loading ? (
+              // Skeleton loading state for despesa mensal
+              <div className="animate-pulse flex flex-col items-center justify-center h-full">
+                <div className="h-4 w-24 bg-gray-200 rounded mb-1"></div>
+                <div className="h-6 w-16 bg-gray-300 rounded"></div>
+              </div>
+            ) : (
+              <>
+                <p className="text-gray-500 font-semibold">despesa mensal</p>
+                <p className="text-lg font-medium text-red-600">
+                  R$ {currentMonthExpense.toFixed(2)}
+                </p>
+              </>
+            )}
           </div>
+
           <Button
             className="flex flex-row rounded-lg border border-white bg-[#fefdf9] shadow-lg flex-grow ml-4 items-center justify-center h-16 font-semibold"
             type={"button"}
@@ -95,6 +130,7 @@ export default function QuickAccess() {
           </Button>
         </div>
       </div>
+
       <div className="border-l border-[#ebebeb] pl-7 bg-transparent">
         <h2 className="text-lg font-bold">Acesso rápido</h2>
         <ul className="flex items-center mt-6 text-xs font-normal">
