@@ -4,10 +4,9 @@ import Button from "@/app/atoms/Button";
 import LoadingSpinner from "@/app/atoms/LoadingSpinner";
 import SpendingLimitDisplay from "@/app/molecules/SpendingLimitDisplay";
 import Header from "@/app/organisms/Header";
-import LimitExpenses from "../app/atoms/LimitExpenses"; 
+import LimitExpenses from "../app/atoms/LimitExpenses";
 
 export default function LimiteDeGastos() {
-
   const [isLimitExpensesOpen, setIsLimitExpensesOpen] = useState(false);
 
   const { loading } = useAuth();
@@ -42,13 +41,12 @@ export default function LimiteDeGastos() {
                 Nenhum limite de gastos definidos para o mês.
               </p>
               <div className="flex justify-center p-5 m-3">
-              <Button
-              onClick={handleLimitExpensesOpen}
-              title="Definir Limites de Gastos"
-              className="shadow-gray-400 shadow-md bg-green hover:bg-green500 text-white font-medium rounded-md text-base px-8 py-2"
-              type="button"
-/>
-
+                <Button
+                  onClick={handleLimitExpensesOpen}
+                  title="Definir Limites de Gastos"
+                  className="shadow-gray-400 shadow-md bg-green hover:bg-green500 text-white font-medium rounded-md text-base px-8 py-2"
+                  type="button"
+                />
               </div>
             </div>
           </div>

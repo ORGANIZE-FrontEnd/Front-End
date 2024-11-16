@@ -36,28 +36,27 @@ export default function Investimentos() {
           style={{ padding: "0rem 0rem 0" }}
           className="bg-white rounded-lg py-4 min-h-[500px] max-h-[calc(100vh-64px)] flex items-center justify-center shadow-sm"
         >
-                    <div className="flex justify-center">
+          <div className="flex justify-center">
             <div>
               <p style={{ color: "#6E6767", fontWeight: "600" }}>
                 Nenhum Investimento definido para o mês.
               </p>
               <div className="flex justify-center p-5 m-3">
-              <Button
-              onClick={handleOpenInvestments}
-              title="Adicionar Investimento"
-              className="shadow-gray-400 shadow-md bg-green hover:bg-green500 text-white font-medium rounded-md text-base px-8 py-2"
-              type="button"
-/>
-
+                <Button
+                  onClick={handleOpenInvestments}
+                  title="Adicionar Investimento"
+                  className="shadow-gray-400 shadow-md bg-green hover:bg-green500 text-white font-medium rounded-md text-base px-8 py-2"
+                  type="button"
+                />
               </div>
             </div>
           </div>
         </div>
       </div>
       <ModalIntestments
-          show={isInvestmentsOpen}
-          onClose={handleCloseInvestments}
-          title={"Novo Investimento"}
+        show={isInvestmentsOpen}
+        onClose={handleCloseInvestments}
+        title={"Novo Investimento"}
       />
     </>
   );

@@ -46,7 +46,7 @@ const MainContent = () => {
           const { accessToken } = response;
           const result = await saveEncryptedToken(accessToken.jwt);
 
-          if(result !== 200){
+          if (result !== 200) {
             return;
           }
           setTimeout(() => {
@@ -90,7 +90,9 @@ const MainContent = () => {
         value={inputPassword}
         onChange={(e) => setInputPassword(e.target.value)}
       />
-      <div className="w-2/6 h-12 flex items-center justify-center"> {/* Added container for button/spinner */}
+      <div className="w-2/6 h-12 flex items-center justify-center">
+        {" "}
+        {/* Added container for button/spinner */}
         {loading ? (
           <LoadingSpinner />
         ) : (
