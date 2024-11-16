@@ -1,13 +1,16 @@
-import React, { useMemo } from "react";
-import { Doughnut } from "react-chartjs-2";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 import { useAtom } from "jotai";
-import { transactionsAtom } from "./transactionsAtom";
+import React, { useEffect, useMemo, useState } from "react";
+import { Doughnut } from "react-chartjs-2";
+import {
+  getExpenses,
+  getIncomes,
+} from "../services/transaction/transactionService";
 import { currentDateAtom } from "./DateSwitcher";
+import LoadingSpinner from "./LoadingSpinner";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-// Helper function to group data by category
 const groupByCategory = (items: any[]) => {
   const grouped: { [key: string]: number } = {};
   items.forEach((item) => {
@@ -21,24 +24,49 @@ const groupByCategory = (items: any[]) => {
 };
 
 const DonutChart: React.FC = () => {
-  const [transactions] = useAtom(transactionsAtom);
   const [currentDate] = useAtom(currentDateAtom);
+  const [incomeData, setIncomeData] = useState<any[]>([]);
+  const [expenseData, setExpenseData] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // Filter transactions for the selected month and year
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [incomeResponse, expenseResponse] = await Promise.all([
+          getIncomes(),
+          getExpenses(),
+        ]);
+
+        if (incomeResponse.status === "success") {
+          setIncomeData(incomeResponse.data || []);
+        }
+        if (expenseResponse.status === "success") {
+          setExpenseData(expenseResponse.data || []);
+        }
+      } catch (error) {
+        console.error("Failed to fetch income and expense data", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
   const filteredTransactions = useMemo(() => {
     const selectedMonth = currentDate.getMonth();
     const selectedYear = currentDate.getFullYear();
 
-    const filteredIncomes = transactions.incomes.filter((item) => {
-      const itemDate = new Date(item.date);
+    const filteredIncomes = incomeData.filter((item) => {
+      const itemDate = new Date(item.startDate);
       return (
         itemDate.getMonth() === selectedMonth &&
         itemDate.getFullYear() === selectedYear
       );
     });
 
-    const filteredExpenses = transactions.expenses.filter((item) => {
-      const itemDate = new Date(item.date);
+    const filteredExpenses = expenseData.filter((item) => {
+      const itemDate = new Date(item.startDate);
       return (
         itemDate.getMonth() === selectedMonth &&
         itemDate.getFullYear() === selectedYear
@@ -49,16 +77,21 @@ const DonutChart: React.FC = () => {
       incomes: filteredIncomes,
       expenses: filteredExpenses,
     };
-  }, [transactions, currentDate]);
+  }, [incomeData, expenseData, currentDate]);
 
-  const incomeData = groupByCategory(filteredTransactions.incomes);
-  const expenseData = groupByCategory(filteredTransactions.expenses);
+  const incomeCategories = Object.keys(
+    groupByCategory(filteredTransactions.incomes)
+  );
+  const incomeValues = Object.values(
+    groupByCategory(filteredTransactions.incomes)
+  );
 
-  const incomeCategories = Object.keys(incomeData);
-  const incomeValues = Object.values(incomeData);
-
-  const expenseCategories = Object.keys(expenseData);
-  const expenseValues = Object.values(expenseData);
+  const expenseCategories = Object.keys(
+    groupByCategory(filteredTransactions.expenses)
+  );
+  const expenseValues = Object.values(
+    groupByCategory(filteredTransactions.expenses)
+  );
 
   const incomeChartData = {
     labels: incomeCategories,
@@ -114,14 +147,15 @@ const DonutChart: React.FC = () => {
 
   return (
     <div className="p-4 max-w-4xl mx-auto">
-      {!hasTransactions ? (
+      {loading ? (
+        <div></div>
+      ) : !hasTransactions ? (
         <p className="text-center text-gray-500 pt-24">
           Nenhuma movimentação até o momento. Que tal começar a adicionar seus
           gastos agora?
         </p>
       ) : (
         <div className="flex flex-wrap justify-center gap-10 relative">
-          {/* Donut chart for Expenses */}
           <div className="relative w-1/2 max-w-xs">
             <Doughnut data={expenseChartData} options={options} />
             <div

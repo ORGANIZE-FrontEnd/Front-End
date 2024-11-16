@@ -1,31 +1,33 @@
-import useLogUser from "@/app/atoms/useLogUser";
-import useRequireAuth from "@/app/atoms/useRequireAuth";
-import Header from "@/app/organisms/Header";
-import SpendingLimitDisplay from "@/app/molecules/SpendingLimitDisplay";
-import { useState } from "react";
+import { useAuth } from "@/app/atoms/AuthContext";
+import BarChart from "@/app/atoms/BarChart";
+import CategoryTable from "@/app/atoms/CategoryTable";
 import Container from "@/app/atoms/Container";
 import DonutChart from "@/app/atoms/DonutChart";
-import CategoryTable from "@/app/atoms/CategoryTable";
-import BarChart from "@/app/atoms/BarChart";
-import SummaryTable from "@/app/atoms/SummaryTable";
-import { useAtom } from "jotai";
 import { filterAtom } from "@/app/atoms/filterAtom";
+import LoadingSpinner from "@/app/atoms/LoadingSpinner";
+import SummaryTable from "@/app/atoms/SummaryTable";
+import SpendingLimitDisplay from "@/app/molecules/SpendingLimitDisplay";
+import Header from "@/app/organisms/Header";
+import { useAtom } from "jotai";
+import { useState } from "react";
 
 export default function Relatorios() {
-  useLogUser();
-  useRequireAuth();
-
   const [activeTab, setActiveTab] = useState<"movimentacoes" | "categorias">(
     "categorias"
   );
   const [filter] = useAtom(filterAtom);
+  const { loading } = useAuth();
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   console.log("Current filter:", filter);
 
   return (
     <>
       <Header />
-      <Container className="">
+      <Container>
         <SpendingLimitDisplay title={"Relatórios"} displayType={"relatorios"} />
         <div className="bg-white rounded-b-lg py-1.5 min-h-[600px] shadow-md">
           <div className="flex border-b-2">

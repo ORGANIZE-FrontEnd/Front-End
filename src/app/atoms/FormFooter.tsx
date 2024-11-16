@@ -1,6 +1,6 @@
 type FormFooterProps = {
   onClose: () => void;
-  onSubmit: (event: React.FormEvent) => void; // Accept an event argument
+  onSubmit: (event: React.FormEvent) => void;
 };
 
 const FormFooter: React.FC<FormFooterProps> = ({ onClose, onSubmit }) => (

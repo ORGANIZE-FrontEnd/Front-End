@@ -1,15 +1,21 @@
-import useLogUser from "@/app/atoms/useLogUser";
-import useRequireAuth from "@/app/atoms/useRequireAuth";
-import QuickAccess from "@/app/organisms/QuickAccess";
+import { AuthProvider, useAuth } from "@/app/atoms/AuthContext";
+import LoadingSpinner from "@/app/atoms/LoadingSpinner";
 import Header from "@/app/organisms/Header";
+import QuickAccess from "@/app/organisms/QuickAccess";
 import Card from "@/app/molecules/card";
-export default function Home() {
-  useLogUser();
-  useRequireAuth();
+
+const HomeContent = () => {
+  const { loading, userData } = useAuth();
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
   return (
     <>
       <Header />
       <div className="pt-8 px-8 sm:px-16 md:px-24 lg:px-32 xl:px-64">
+        <QuickAccess userName={userData?.name} />
         <div className="bg-white border border-gray-200 rounded-lg shadow flex flex-row p-6">
           <div className="flex flex-col justify-between w-full pr-7">
             <div className="flex flex-col">
@@ -83,5 +89,13 @@ export default function Home() {
       </div>
       <Card />
     </>
+  );
+};
+
+export default function Home() {
+  return (
+    <AuthProvider>
+      <HomeContent />
+    </AuthProvider>
   );
 }

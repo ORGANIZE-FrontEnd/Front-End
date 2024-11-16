@@ -1,10 +1,10 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
-import { useRouter } from "next/router";
 import Link from "next/link";
+import { useRouter } from "next/router";
+import { useEffect, useRef, useState } from "react";
 import Button from "../atoms/Button";
-import { useAtom } from "jotai";
-import { userAtom } from "../atoms/authAtom";
+import { logoutUser } from "../services/user/userService";
+import { eraseCookie } from "../services/auth/cookieService";
 
 const links = [
   { href: "/home", label: "Visao geral" },
@@ -23,7 +23,15 @@ export default function Header() {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const bellRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
-  const [user, setUser] = useAtom(userAtom);
+
+  const handleLogout = async () => {
+    const response = await logoutUser();
+    if (response.status === "success") {
+      eraseCookie("accessToken");
+    }
+    console.error(response.message);
+    router.push("/login");
+  };
 
   useEffect(() => {
     const activeLink = document.querySelector(".active-link") as HTMLElement;
@@ -31,7 +39,6 @@ export default function Header() {
 
     if (activeLink && navContainer) {
       const activeLinkRect = activeLink.getBoundingClientRect();
-
       setIndicatorPosition(activeLinkRect.left);
       setIndicatorWidth(activeLink.offsetWidth + 5);
     }
@@ -42,8 +49,16 @@ export default function Header() {
   const handleMouseEnterBell = () => setShowBellMenu(true);
   const handleMouseLeaveBell = () => setShowBellMenu(false);
 
-  const handleMouseEnterProfile = () => setShowProfileMenu(true);
-  const handleMouseLeaveProfile = () => setShowProfileMenu(false);
+  let profileMenuTimeout: ReturnType<typeof setTimeout>;
+
+  const handleMouseEnterProfile = () => {
+    clearTimeout(profileMenuTimeout);
+    setShowProfileMenu(true);
+  };
+
+  const handleMouseLeaveProfile = () => {
+    profileMenuTimeout = setTimeout(() => setShowProfileMenu(false), 300);
+  };
 
   return (
     <nav className="bg-green border-gray-200 dark:bg-gray-900 relative">
@@ -140,16 +155,15 @@ export default function Header() {
               <img src="/iconProfilee.svg" alt="Profile Icon" className="h-7" />
             </button>
             {showProfileMenu && (
-              <div className="absolute right-0 top-full mt-0 w-48 bg-white border border-gray-300 rounded-lg shadow-md p-4">
+              <div
+                onMouseEnter={handleMouseEnterProfile}
+                onMouseLeave={handleMouseLeaveProfile}
+                className="absolute right-0 top-full mt-0 w-48 bg-white border border-gray-300 rounded-lg shadow-md p-4"
+              >
                 <Button
                   className="w-full text-black hover:text-green font-medium rounded-lg text-base py-2.5"
                   title="Sair"
-                  onClick={() =>
-                    setUser({
-                      ...user,
-                      isAuthenticated: false,
-                    })
-                  }
+                  onClick={() => handleLogout()}
                   type="button"
                 />
               </div>

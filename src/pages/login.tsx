@@ -1,47 +1,73 @@
-import { useAtom } from "jotai";
-import { userAtom } from "@/app/atoms/authAtom";
-import { useRouter } from "next/router";
+import Alert from "@/app/atoms/Alert";
 import Button from "@/app/atoms/Button";
 import InputField from "@/app/atoms/InputField";
+import LoadingSpinner from "@/app/atoms/LoadingSpinner";
 import SidebarContent from "@/app/molecules/SideBarContent";
-import React, { useEffect, useState } from "react";
-import useLogUser from "@/app/atoms/useLogUser";
-import Alert from "@/app/atoms/Alert";
+import { saveEncryptedToken } from "@/app/services/auth/cookieService";
+import { loginService } from "@/app/services/auth/loginService";
+import { useRouter } from "next/router";
+import { useState } from "react";
 
 const MainContent = () => {
   const [inputEmail, setInputEmail] = useState("");
   const [inputPassword, setInputPassword] = useState("");
-  const [user, setUser] = useAtom(userAtom);
-  const [error, setError] = useState<string | null>(null);
+  const [alertMessage, setAlertMessage] = useState<string | null>(null);
+  const [alertType, setAlertType] = useState<"error" | "success" | "info">(
+    "info"
+  );
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
-  useLogUser();
 
   const handleCloseAlert = () => {
-    setError(null);
+    setAlertMessage(null);
   };
 
-  useEffect(() => {
-    if (user.isAuthenticated) {
-      router.push("/home");
-    }
-  }, [user, router]);
-
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (!inputEmail || !inputPassword) {
-      setError("Email e senha não podem estar vazios.");
+      setAlertType("error");
+      setAlertMessage("Email e senha não podem estar vazios.");
       return;
     }
 
-    if (inputEmail === user.email && inputPassword === user.password) {
-      setError("");
-      setUser({
-        ...user,
-        isAuthenticated: true,
-      });
-      router.push("/home");
-    } else {
-      setError("Credenciais inválidas.");
+    let retryCount = 0;
+    const maxRetries = 2;
+    setLoading(true);
+
+    while (retryCount < maxRetries) {
+      try {
+        const response = await loginService(inputEmail, inputPassword);
+
+        if (response) {
+          setAlertMessage(
+            "Login realizado com sucesso! Redirecionando pra home..."
+          );
+          setAlertType("success");
+
+          const { accessToken } = response;
+          const result = await saveEncryptedToken(accessToken.jwt);
+
+          if(result !== 200){
+            return;
+          }
+          setTimeout(() => {
+            router.push("/home");
+          }, 2000);
+
+          setLoading(false);
+          return;
+        }
+      } catch (error: unknown) {
+        retryCount += 1;
+        if (error instanceof Error) {
+          setAlertMessage(error.message);
+          setAlertType("error");
+        }
+      }
     }
+
+    setAlertMessage("Falha no login após várias tentativas. Tente novamente.");
+    setAlertType("error");
+    setLoading(false);
   };
 
   return (
@@ -64,14 +90,25 @@ const MainContent = () => {
         value={inputPassword}
         onChange={(e) => setInputPassword(e.target.value)}
       />
-      <Button
-        type="button"
-        title="Entrar"
-        onClick={handleLogin}
-        className="w-2/6 focus:outline-none text-white bg-green hover:bg-green800 focus:ring-4 focus:ring-green300 font-medium rounded-lg text-base px-5 py-2.5 me-2 mb-2"
-      />
-      {error && (
-        <Alert message={error} type="error" onClose={handleCloseAlert} />
+      <div className="w-2/6 h-12 flex items-center justify-center"> {/* Added container for button/spinner */}
+        {loading ? (
+          <LoadingSpinner />
+        ) : (
+          <Button
+            type="button"
+            title="Entrar"
+            onClick={handleLogin}
+            className="w-full focus:outline-none text-white bg-green hover:bg-green800 focus:ring-4 focus:ring-green300 font-medium rounded-lg text-base px-5 py-2.5"
+            disabled={loading}
+          />
+        )}
+      </div>
+      {alertMessage && (
+        <Alert
+          message={alertMessage}
+          type={alertType}
+          onClose={handleCloseAlert}
+        />
       )}
     </div>
   );
