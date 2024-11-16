@@ -22,7 +22,7 @@ const ModalReceiptExpenses: React.FC<ModalProps> = ({
           className="fixed inset-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50"
         >
           <div className="relative p-4 w-full max-w-md max-h-full min-w-[600px]">
-            <div className="relative bg-white rounded-sm shadow">
+            <div className="relative bg-white rounded-xl shadow">
               <ModalHeader
                 title={type === "income" ? "Nova receita" : "Nova despesa"}
                 onClose={onClose}
