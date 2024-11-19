@@ -1,11 +1,10 @@
 import { useAuth } from "@/app/atoms/AuthContext";
+import Button from "@/app/atoms/Button";
 import LoadingSpinner from "@/app/atoms/LoadingSpinner";
 import SpendingLimitDisplay from "@/app/molecules/SpendingLimitDisplay";
 import Header from "@/app/organisms/Header";
-import Button from "@/app/atoms/Button";
-import BarChart from "@/app/atoms/BarChart";
-import ModalIntestments from "../app/atoms/ModalIntestment";
 import { useState } from "react";
+import ModalIntestments from "../app/atoms/ModalIntestment";
 
 export default function Investimentos() {
   const [isInvestmentsOpen, setIsInvestmentsOpen] = useState(false);

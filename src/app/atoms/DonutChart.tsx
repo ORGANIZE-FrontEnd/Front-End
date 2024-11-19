@@ -7,7 +7,6 @@ import {
   getIncomes,
 } from "../services/transaction/transactionService";
 import { currentDateAtom } from "./DateSwitcher";
-import LoadingSpinner from "./LoadingSpinner";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
