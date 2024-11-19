@@ -41,7 +41,7 @@ export default function LimitExpenses(props: Readonly<LimitExpenseProps>) {
           className="fixed inset-0 z-50 flex justify-center items-center w-full h-full bg-black bg-opacity-50"
         >
           <div className="relative p-4 w-full max-w-md max-h-full min-w-[600px]">
-            <div className="relative bg-white rounded-sm shadow ">
+            <div className="relative bg-white rounded-xl shadow ">
               <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
                 <h3 className="text-lg font-semibold text-grey ">
                   Novo limite

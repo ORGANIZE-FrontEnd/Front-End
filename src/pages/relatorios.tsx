@@ -12,8 +12,8 @@ import { useAtom } from "jotai";
 import { useState } from "react";
 
 export default function Relatorios() {
-  const [activeTab, setActiveTab] = useState<"movimentacoes" | "categorias">(
-    "categorias"
+  const [activeTab, setActiveTab] = useState<"categorias" | "movimentacoes">(
+    "movimentacoes"
   );
   const [filter] = useAtom(filterAtom);
   const { loading } = useAuth();
@@ -32,38 +32,38 @@ export default function Relatorios() {
         <div className="bg-white rounded-b-lg py-1.5 min-h-[600px] shadow-md">
           <div className="flex border-b-2">
             <button
-              onClick={() => setActiveTab("categorias")}
+              onClick={() => setActiveTab("movimentacoes")}
               className={`flex-1 py-1 text-lg text-center font-semibold transition-all duration-100 ease-in-out
                   ${
-                    activeTab === "categorias"
+                    activeTab === "movimentacoes"
                       ? "text-[#539C6A] border-b-2 border-[#539C6A]"
                       : "text-gray-500 hover:bg-gray-50"
                   }`}
             >
-              Categorias
+              Entradas X Saídas
             </button>
             <button
-              onClick={() => setActiveTab("movimentacoes")}
+              onClick={() => setActiveTab("categorias")}
               className={`flex-1 py-1 text-lg text-center font-semibold transition-all duration-100 ease-in-out
                 ${
-                  activeTab === "movimentacoes"
+                  activeTab === "categorias"
                     ? "text-[#539C6A] border-b-2 border-[#539C6A]"
                     : "text-gray-500 hover:bg-gray-50"
                 }`}
             >
-              Entradas X Saídas
+              Categorias
             </button>
           </div>
           <div className="py-5">
-            {activeTab === "categorias" ? (
-              <>
-                <DonutChart />
-                <CategoryTable />
-              </>
-            ) : (
+            {activeTab === "movimentacoes" ? (
               <>
                 <BarChart />
                 <SummaryTable filterType={filter} />
+              </>
+            ) : (
+              <>
+                <DonutChart />
+                <CategoryTable />
               </>
             )}
           </div>

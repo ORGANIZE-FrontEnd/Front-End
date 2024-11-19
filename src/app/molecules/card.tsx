@@ -3,10 +3,7 @@ import { FaCreditCard } from "react-icons/fa";
 
 const Card = () => {
   return (
-    <section
-      className="bg-white max-w-sm mx-auto rounded-lg shadow p-6 mt-6"
-      style={{ marginRight: "20px" }}
-    >
+    <section className="bg-white rounded-lg shadow p-6">
       {/* Seção de faturas */}
       <div className="flex justify-between items-center mb-4">
         <div className="text-sm text-gray-600">

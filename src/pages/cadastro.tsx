@@ -89,16 +89,13 @@ const MainContent = () => {
 
     while (retryCount < maxRetries) {
       try {
-        const response = await axios.post(
-          `${baseURL}/users/create`,
-          {
-            name: formData.name,
-            email: formData.email,
-            phone: formData.phone,
-            birthday: formData.birthDate,
-            password: formData.password,
-          }
-        );
+        const response = await axios.post(`${baseURL}/users/create`, {
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          birthday: formData.birthDate,
+          password: formData.password,
+        });
 
         if (response.status === 201) {
           setAlertMessage("Usuário criado com sucesso!");
@@ -122,7 +119,9 @@ const MainContent = () => {
       }
     }
 
-    setAlertMessage("Falha na criação após várias tentativas. Tente novamente.");
+    setAlertMessage(
+      "Falha na criação após várias tentativas. Tente novamente."
+    );
     setAlertType("error");
     setLoading(false);
   };

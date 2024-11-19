@@ -169,7 +169,7 @@ export default function QuickAcces(props: Readonly<QuickAccessProps>) {
             >
               <img
                 src="/investmentIcon.svg"
-                className="w-8"
+                className="w-8 mt-2 mb-1"
                 alt="investment icon"
               />
               INVESTIR
