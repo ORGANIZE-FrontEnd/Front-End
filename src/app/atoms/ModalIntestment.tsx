@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import Button from "./Button";
 
 type ModalIntestmentsProps = {
@@ -7,7 +7,9 @@ type ModalIntestmentsProps = {
   title: string;
 };
 
-export default function ModalIntestments(props: ModalIntestmentsProps) {
+export default function ModalIntestments(
+  props: Readonly<ModalIntestmentsProps>
+) {
   const [description, setDescription] = useState("");
   const [dividendYield, setDividendYield] = useState("");
   const [investmentName, setInvestmentName] = useState("Tigrinho");

@@ -5,7 +5,7 @@ import ModalHeader from "../atoms/ModalHeader";
 type ModalProps = {
   show: boolean;
   onClose: () => void;
-  type: "receipt" | "expense";
+  type: "income" | "expense";
 };
 
 const ModalReceiptExpenses: React.FC<ModalProps> = ({
@@ -24,7 +24,7 @@ const ModalReceiptExpenses: React.FC<ModalProps> = ({
           <div className="relative p-4 w-full max-w-md max-h-full min-w-[600px]">
             <div className="relative bg-white rounded-sm shadow">
               <ModalHeader
-                title={type === "receipt" ? "Nova receita" : "Nova despesa"}
+                title={type === "income" ? "Nova receita" : "Nova despesa"}
                 onClose={onClose}
               />
               <ModalForm type={type} onClose={onClose} />
