@@ -25,9 +25,6 @@ export default function LimitExpenses(props: Readonly<LimitExpenseProps>) {
   const [alertType, setAlertType] = useState<"success" | "error" | null>(null);
   const [loading, setLoading] = useState(false);
 
-  console.log("id received: ", props.limitId);
-  console.log("catgeory recieved: ", props.category);
-
   const expenseCategories = [
     "Alimentação",
     "Transporte",
