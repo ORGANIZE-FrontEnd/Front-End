@@ -80,7 +80,6 @@ const SpendingChart: React.FC<SpendingChartProps> = ({
                 {limitData.limitValue > 0 ? (
                   <button
                     className="p-2 items-center flex cursor-pointer"
-                    role="button"
                     onClick={() => onEditLimit(limitData.id, category)}
                     aria-label="Edit limit"
                     onKeyDown={(e) => {
@@ -95,7 +94,6 @@ const SpendingChart: React.FC<SpendingChartProps> = ({
                   <button
                     className="p-2 items-center flex cursor-pointer"
                     onClick={() => onEditLimit(undefined, category)}
-                    role="button"
                     aria-label="Add limit"
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
