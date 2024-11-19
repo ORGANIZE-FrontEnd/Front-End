@@ -142,7 +142,7 @@ export default function LimiteDeGastos() {
         />
         <div
           style={{ padding: "0rem 0rem 0" }}
-          className="bg-white rounded-lg py-4 min-h-[500px] max-h-[calc(100vh-64px)] flex items-center justify-center shadow-sm"
+          className="bg-white rounded-lg py-4 min-h-[500px] flex items-center justify-center shadow-sm"
         >
           {categories.length > 0 ? (
             <div className="w-full">
