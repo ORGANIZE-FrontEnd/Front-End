@@ -55,7 +55,7 @@ export default function LimiteDeGastos() {
       setSelectedCategory(category);
       setSelectedLimitData({
         limitValue: 0,
-        category: category || "Select category",
+        category: category ?? "Select category",
       });
     }
 

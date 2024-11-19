@@ -54,9 +54,10 @@ const SpendingChart: React.FC<SpendingChartProps> = ({
           style={{ width: "92%" }}
         >
           <div
-            className={`h-full bg-green transition-all duration-1000 ease-in-out`}
+            className={`h-full transition-all duration-1000 ease-in-out`}
             style={{
               width: animated ? `${totalPercentage}%` : "0%",
+              backgroundColor: totalExpense > totalLimit ? "red" : "green",
             }}
           />
         </div>
@@ -77,19 +78,33 @@ const SpendingChart: React.FC<SpendingChartProps> = ({
                   {expense} de {limitData.limitValue}
                 </span>
                 {limitData.limitValue > 0 ? (
-                  <div
-                    className="p-2 cursor-pointer items-center flex"
+                  <button
+                    className="p-2 items-center flex cursor-pointer"
+                    role="button"
                     onClick={() => onEditLimit(limitData.id, category)}
+                    aria-label="Edit limit"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        onEditLimit(limitData.id, category);
+                      }
+                    }}
                   >
                     <FaEdit size={18} color="gray" />
-                  </div>
+                  </button>
                 ) : (
-                  <div
-                    className="p-2 cursor-pointer items-center flex"
+                  <button
+                    className="p-2 items-center flex cursor-pointer"
                     onClick={() => onEditLimit(undefined, category)}
+                    role="button"
+                    aria-label="Add limit"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        onEditLimit(undefined, category);
+                      }
+                    }}
                   >
                     <FaPlus size={18} color="gray" />
-                  </div>
+                  </button>
                 )}
               </div>
             </div>
@@ -99,9 +114,11 @@ const SpendingChart: React.FC<SpendingChartProps> = ({
                 style={{ width: "92%" }}
               >
                 <div
-                  className={`h-full bg-green transition-all duration-1000 ease-in-out`}
+                  className={`h-full transition-all duration-1000 ease-in-out`}
                   style={{
                     width: animated ? `${percentage}%` : "0%",
+                    backgroundColor:
+                      expense > limitData.limitValue ? "red" : "green",
                   }}
                 />
               </div>
